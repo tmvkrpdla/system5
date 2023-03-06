@@ -80,6 +80,8 @@ public class aptController {
 	public String test(HttpSession session, Model model) throws Exception {
 
 		String moveUrl = "redirect:../";
+		
+		System.out.println("하하하 api 다뺏다 ㅋ");
 
 		moveUrl = "apt/jusoTest";
 
