@@ -424,8 +424,6 @@ public class aptController {
 		String moveUrl = "redirect:../";
 		//System.out.println("nowPage = " + nowPage);
 		//System.out.println("siteName = " + siteName);
-		System.out.println("경준씨 받아주세요 (4:26)");
-		System.out.println("경준씨 이것도 받아주세요 (5:01)");
 
 		if (!SessionUtil.isNull(session, "ADMIN")) {
 			moveUrl = "apt/addApt2";

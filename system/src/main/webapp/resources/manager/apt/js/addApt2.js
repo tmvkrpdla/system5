@@ -60,7 +60,6 @@ $(document).ready(
 						        var realDy = coordsStr[1].replace(')', "");
 						        
 						        
-						        
 
 //																				        result = {
 //															"address" : {
@@ -97,16 +96,15 @@ $(document).ready(
 //															"y" : "37.3119956359267"
 //														}
 						        
-						        
 						        console.log('지번주소 : ' + result[0].address.address_name);
-						        console.log('도로명 주소 : ' + result[0].address_name);
+						        console.log('도로명 주소 : ' + result[0].road_address.address_name);
 						        console.log('좌표2 : ' + coords);
 						        console.log('우편번호 : ' + result[0].road_address.zone_no);
 						        console.log('법정동코드 : ' + result[0].address.b_code);
 						        console.log('행정구역코드 : ' + result[0].address.h_code);
 						        
 						        
-						        $("#addressDoro").val(result[0].address_name);
+						        $("#addressDoro").val(result[0].road_address.address_name);
 						        $("#dx").val(realDx);
 						        $("#dy").val(realDy);
 						        $("#zone_no").val(result[0].road_address.zone_no);
@@ -163,6 +161,32 @@ $(document).ready(
 								let sitePhone = document.getElementById('sitePhone').value;
 								let dongName2 = document.getElementsByName('dongName');
 								let str1 = document.getElementsByName('str1');
+								
+								let Address = document.getElementById('addressDoro').value;
+								let AddressJibun = document.getElementById('addressJibun').value;
+								let ZipCode = document.getElementById('zone_no').value;
+								let dx = document.getElementById('dx').value;
+								let dy = document.getElementById('dy').value;
+								let RoadCode = document.getElementById('h_code').value;
+								let AreaCode = document.getElementById('b_code').value;
+								
+								//네이버 없는 정보 널처리
+								let ReadDay = 1;
+								let YearBuilt = 0;
+								let MonthBuilt = 0;
+								let DayBuilt = 0;
+								let Fax = null;
+								let Email = null;
+								let Area1 = 0;
+								let Area2 = 0;
+								let ParkingTop = 0;
+								let ParkingGround = 0;
+								let ParkingUnder = 0;
+								let Elev = 0;
+								let PassageType = 0;
+								let State = 3;
+								let Comment = "";
+								
 								for (let i = 0; i < _numbersDong; i++) {
 									aptInfo.push(str1[i].value + ":" + dongName2[i].value);
 								}
@@ -190,6 +214,7 @@ $(document).ready(
 										PassageType, State, Comment);
 								
 								let _seq_site = _res.seq_site
+								console.log("ZipCode = " + ZipCode);
 								console.log("_seq_site = ", _seq_site);
 								console.log("siteCode = ", siteCode);
 								// alert("_res.seq_site:" + _res.seq_site);
