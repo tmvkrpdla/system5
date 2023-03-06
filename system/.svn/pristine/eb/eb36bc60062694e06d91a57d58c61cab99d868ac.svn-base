@@ -1,0 +1,55 @@
+var enernet = enernet || {};
+enernet.namespace = function(ns_string) {
+	var parts = ns_string.split('.'), parent = enernet, i;
+	if (parts[0] === "enernet") {
+		parts = parts.slice(1);
+	}
+	for (i = 0; i < parts.length; i += 1) {
+		if (typeof parent[parts[i]] === "undefined") {
+			parent[parts[i]] = {};
+		}
+		parent = parent[parts[i]];
+	}
+	return parent;
+}
+enernet.namespace('enernet.modules.evt');
+
+enernet.modules.evt = function() {
+	//	private
+	
+	/**
+	 * targetId
+	 * foucsId
+	 * 엔터이벤트 발생하면 다음 인풋을 포커스함
+	 */
+	function _enterFoucs(targetId, afterFocusId){
+		$("#"+targetId).on('keypress', function(e){
+			if(e.keyCode == 13){
+				$("#"+afterFocusId).focus();
+			}	
+		})
+	};
+	
+	/**
+	 * targetId
+	 * btnId
+	 * 엔터이벤트 발생하면 다음 버튼 클릭함
+	 */
+	function _enterBtnClick (targetId, afterBtnId){
+		$("#"+targetId).on('keypress', function(e){
+			if(e.keyCode == 13){
+				$("#"+afterBtnId).click();
+			}
+		})
+	}
+		
+	
+	
+	//	=	=	=	=	=	=	=	=	=	=	=
+	
+	return {
+		enterFocus : _enterFoucs,
+		enterBtnClick : _enterBtnClick
+	};
+	
+}();

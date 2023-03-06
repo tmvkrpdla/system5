@@ -1,0 +1,304 @@
+function getData() {
+	$('div.wrap-loading').removeClass('display-none');
+	try {
+		var _numbersDong = $("#numbersDong").val();
+		for (var i = 0; i < _numbersDong; i++) {
+			
+			var _tag = "<tr class='saveDongEvt modDongEvt'>";
+			_tag += "<td style='vertical-align:middle'>"
+					+ '동 이름 : '
+					+ "<input type='text' name='dongName' class='dongName form-control' style='width: 30%; display: inline;'>";
+					+ "</td>";
+			_tag += "<td style='vertical-align:middle'>"
+					+ "<form name='dongModForm' class='dongModForm' method='post' action='popDongMod' target='popDongModForm'>"
+					+ '층당 세대 수 : '
+					+ "<input type='text' name='oneFloorHo' class='oneFloorHo form-control' style='margin-right: 10px; width: 10%; display: inline;'>"
+					//+ '<br>'
+					+ '층 수 : '
+					+ "<input type='text' name='floor' class='floor form-control' style='width: 10%; display: inline;'>"
+					+ "</form>" + "</td>";
+			_tag += "<td style='vertical-align:middle'>"
+					+ "<input type=button class='btn btn-outline-success btn-sm saveDongBtn' id='saveDongBtn' value='저장'>";
+			_tag += "<input type=button class='btn btn-outline-success btn-sm modDongBtn' style='margin-left: 5px;' value='수정'>";
+			_tag += "</td>";
+			_tag += "</tr>";
+
+			$('#aptTable').append(_tag);
+		}
+
+		// 저장버튼
+		function saveDong() {
+			var _trSave = document.getElementsByClassName('saveDongBtn');
+			for (var i = 0; i < _trSave.length; i++) {
+				_trSave[i].onclick = function() {
+
+					if (document.getElementsByName('_oneFloorHo').length != 0) {
+						$("._oneFloorHo").remove();
+					}
+					
+					if (document.getElementsByName('modCon').length != 0) {
+						$(".modCon").remove();
+					}
+					
+					var _seqSite = $(".seqSite").val();
+					//console.log("_seqSite = " + _seqSite);
+					
+					var _dongName = $(".dongName").val();
+					//console.log("_dongName = " + _dongName);
+					if (_dongName == '') {
+						return alert('동 이름을 입력해주시기 바랍니다.');
+					}
+
+					var _oneFloorHo = $(".oneFloorHo").val();
+					if (_oneFloorHo == '') {
+						return alert('층당 세대 수를 입력해주시기 바랍니다.');
+					}
+
+					var _floor = $(".floor").val();
+					if (_floor == '') {
+						return alert('층수를 입력해주시기 바랍니다.');
+					}
+
+					var _dongModForm = $(this).parents('tr.saveDongEvt').find('form')[0];
+					//console.log("_dongModForm = " + _dongModForm);
+					
+					var _dongName = $(this).parents('tr.saveDongEvt').find("input[name='dongName']").val();
+					console.log("_dongName = " + _dongName);
+
+					var _oneFloorHo = $(_dongModForm).find("input[name='oneFloorHo']").val();
+					// var _oneFloorHo = $("oneFloorHo").val();
+					//console.log("_oneFloorHo = " + _oneFloorHo);
+
+					var _modCon = $(_dongModForm).find("input[name='floor']").val();
+					//console.log("_modCon = " + _modCon);
+
+					var modinput = document.createElement("input");
+					modinput.setAttribute("id", "_oneFloorHo");
+					modinput.setAttribute("class", "_oneFloorHo");
+					modinput.setAttribute("name", "_oneFloorHo");
+					modinput.setAttribute("type", "text");
+					modinput.setAttribute("value", _oneFloorHo);
+					document.body.appendChild(modinput);
+
+					var modConinput = document.createElement("input");
+					modConinput.setAttribute("id", "modCon");
+					modConinput.setAttribute("class", "modCon");
+					modConinput.setAttribute("name", "modCon");
+					modConinput.setAttribute("type", "text");
+					modConinput.setAttribute("value", _modCon);
+					document.body.appendChild(modConinput);
+
+					var _modinput = document.modinput;
+					var _modConinput = document.modConinput;
+					var tag = "<table id='example-table-1' border='1' style='display: none;'>";
+					var id3 = $(".modCon").val();
+					//console.log("id3 = " + id3);
+					var b1 = parseInt(id3);
+					var id4 = $("._oneFloorHo").val();
+					var b2 = parseInt(id4);
+
+					for (j = 1; j <= b1; j++) {
+						tag += "<tr class='delTrHoEvt'>";
+						for (i = 1; i <= b2; i++) {
+							tag += "<td class='delTdHoEvt'>"
+									// +j+"0"+i
+									+ "<input type='text' name='seq_ho' class='seq_ho' value="
+									+ j + "0" + i + ">" + "</td>";
+						}
+						tag += "</tr>";
+					}
+					tag += "</table>";
+					area.innerHTML = tag;
+
+					var str = ""
+					var tdArr = new Array(); // 배열선언
+				//	var test = "101,102,103,104,201,202"
+
+					var tr = $("#example-table-1").children();
+					//console.log("tr = " + tr);
+					var td = tr.children();
+					var input = td.find("input[class='seq_ho']");
+					input.each(function(i) {
+						tdArr.push(input.eq(i).val());
+					});
+					//console.log("배열에 담긴 값 : " + tdArr);
+					
+					var str1 = tdArr.join();
+					//console.log("str1 = " + str1);
+					
+					var _resDong = enernet.modules.api.addDong(_seqSite, _dongName, str1);
+					//console.log("동 저장 _res = " + _resDong); 
+					
+					if(_resDong.seq_dong > 0){
+						alert("저장에 성공하였습니다.");
+					}
+					else{
+						alert("저장에 실패하였습니다.");
+					}
+				}
+			}
+
+		}; // saveDong end
+		
+		// 수정버튼
+		function modDong() {
+			var _trMod = document.getElementsByClassName('modDongEvt');
+			if (_trMod.length != 0) {
+
+				for (var i = 0; i < _trMod.length; i++) {
+					_trMod[i].onclick = function(e) {
+
+						if (document.getElementsByName('_oneFloorHo').length != 0) {
+							$("._oneFloorHo").remove();
+						}
+						
+						if (document.getElementsByName('modCon').length != 0) {
+							$(".modCon").remove();
+						}
+						
+						if (document.getElementsByName('modDongName').length != 0) {
+							$(".modDongName").remove();
+						}
+						
+						if ($(e.target).hasClass('modDongBtn')) {
+							//console.log("수정버튼 클릭");
+							
+							var _dongName = $(".dongName").val();
+							if (_dongName == '') {
+								return alert('동 이름을 입력해주시기 바랍니다.');
+							}
+							
+							var _oneFloorHo = $(".oneFloorHo").val();
+							if (_oneFloorHo == '') {
+								return alert('층당 세대 수를 입력해주시기 바랍니다.');
+							}
+							
+							var _floor = $(".floor").val();
+							if (_floor == '') {
+								return alert('층수를 입력해주시기 바랍니다.');
+							}
+							
+							var _dongModForm = $(this).find('form')[0];
+							//console.log("_dongModForm = " + _dongModForm);
+							
+							var _dongName = $(this).find("input[name='dongName']").val();
+							console.log("_dongName = " + _dongName);
+							
+							var _oneFloorHo = $(_dongModForm).find("input[name='oneFloorHo']").val();
+							//var _oneFloorHo = $("oneFloorHo").val();
+							//console.log("_oneFloorHo = " + _oneFloorHo);
+							
+							var _modCon = $(_dongModForm).find("input[name='floor']").val();
+							//console.log("_modCon = " + _modCon);
+							
+							var modinput = document.createElement("input");
+							modinput.setAttribute("id", "_oneFloorHo");
+							modinput.setAttribute("class", "_oneFloorHo");
+							modinput.setAttribute("name", "_oneFloorHo");
+							modinput.setAttribute("type", "hidden");
+							modinput.setAttribute("value", _oneFloorHo);
+							document.body.appendChild(modinput);
+
+							var modConinput = document.createElement("input");
+							modConinput.setAttribute("id", "modCon");
+							modConinput.setAttribute("class", "modCon");
+							modConinput.setAttribute("name", "modCon");
+							modConinput.setAttribute("type", "hidden");
+							modConinput.setAttribute("value", _modCon);
+							document.body.appendChild(modConinput);
+							
+							var dongNameinput = document.createElement("input");
+							dongNameinput.setAttribute("id", "modDongName");
+							dongNameinput.setAttribute("class", "modDongName");
+							dongNameinput.setAttribute("name", "modDongName");
+							dongNameinput.setAttribute("type", "hidden");
+							dongNameinput.setAttribute("value", _dongName);
+							document.body.appendChild(dongNameinput);
+
+//							var _modinput = document.modinput;
+//							var _modConinput = document.modConinput;
+//							var _dongNameinput = document.dongNameinput;
+//							console.log("_dongNameinput = " + _dongNameinput);
+
+							var _outerWidth = window.outerWidth * 0.8;
+							var _outerHeight = window.outerHeight * 0.6;
+							window.open("popDongMod",'popDongModForm','height=' + _outerHeight + ', width=' + _outerWidth + ', left=20, top=10, scrollbars=1');
+							// _actModForm.target = 'popActModForm';
+							_dongModForm.submit();
+							
+						} // if 끝
+					} // onclick = function(e) 끝
+				} // for 문 끝
+			} // if 끝
+			
+		}; // modAct 끝
+		modDong();
+		saveDong();
+	
+	} catch (e) {
+		console.log('error');
+		console.log(e)
+	} finally {
+		$('.wrap-loading').addClass('display-none');
+	}
+	
+} // getData 끝
+
+$(document).ready(function() {	
+	// 동별 세대 정보 + 버튼
+    function addDongInfo() {
+		var _delHoEvt = document.getElementsByClassName('dongInfoBtn');
+
+		for (var i = 0; i < _delHoEvt.length; i++) {
+			_delHoEvt[0].onclick = function() {
+				var _numbersDong = $("#numbersDong").val();
+				//console.log("_numbersDong = " + _numbersDong);
+
+				var _aptName = $("#aptName").val();
+				if (_aptName == '') {
+					return alert('단지명을 입력해주시기 바랍니다');
+				}
+				
+				var _numbersDong = $("#numbersDong").val();
+				if (_numbersDong == '') {
+					return alert('동 개수를 입력해주시기 바랍니다');
+				}
+				
+				var _siteCode = $("#site_code").val();
+				if (_siteCode == '') {
+					return alert('단지 코드를 입력해주시기 바랍니다');
+				}
+				
+				var _sitePhone = $("#site_phone").val();
+				if (_sitePhone == '') {
+					return alert('관리실 번호를 입력해주세요.');
+				}
+				
+				//$("#DongInfoBtn").removeAttr('class');
+				$('#DongInfoBtn').remove();
+				
+				var _res = enernet.modules.api.createSite(_aptName, _siteCode, _sitePhone);
+				var _seq_site = _res.seq_site;
+				//console.log("_seq_site = " + _seq_site);
+				$(".seqSite").val(_seq_site);
+				
+				getData();
+			}
+		}
+
+	};
+	addDongInfo();
+	
+	// 취소 버튼
+	$("#cancleBtn").click(function() {
+		location.reload();
+	});
+	
+	// 등록 버튼
+	$("#regBtn").click(function() {
+		alert('등록에 성공하였습니다.');
+		
+		location.href = '../apt/estate';
+	});
+	
+});

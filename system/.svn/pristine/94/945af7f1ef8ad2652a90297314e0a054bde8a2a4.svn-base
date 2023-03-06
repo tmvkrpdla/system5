@@ -1,0 +1,130 @@
+package manager.co.kr.util;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+public class StringUtil {
+	
+	/**
+	 * 현재년도를 구하는 함수	String
+	 * ex) 2020
+	 * @return
+	 */
+	public String getFullYearYYYY() {
+		return String.valueOf(getFullYearInt()); 
+	}
+	
+	/**
+	 * 현재년도를 구하는 함수	int
+	 * @return
+	 */
+	public int getFullYearInt() {
+		Calendar cal = Calendar.getInstance();
+		return cal.get(cal.YEAR);
+	}
+	
+	
+	/**
+	 * 현재 달을 구하는 함수	
+	 * ex) 2자리이며, 1~9월일경우 0을 붙임 09
+	 * @return
+	 */
+	public String getMonthMM() {
+		int month = getMonthInt();
+		String temp = "";
+		
+		if(month<10) {
+			temp = "0"+month;
+		}else {
+			temp = ""+month;
+		}
+		
+		return temp;
+	}
+	
+	
+	/**
+	 * 현재 달을 구하는 함수
+	 * ex) 1월~9월은 1자리 // 10~12월은 2자리	
+	 * @return
+	 */
+	public String getMonthString() {
+		
+		return String.valueOf(getMonthInt());
+	}
+	
+	/**
+	 * 현재 달을 구하는 함수
+	 * ex) 1월~9월은 1자리 // 10~12월은 2자리
+	 * @return
+	 */
+	public int getMonthInt() {
+		Calendar cal = Calendar.getInstance();
+		int month = cal.get (cal.MONTH) + 1 ;
+		return month;
+	}
+	
+	/**
+	 * 현재 일을 구하는 함수
+	 * 1~9는 1자리
+	 * @return
+	 */
+	public int getDayInt() {
+		Calendar cal = Calendar.getInstance();
+		return cal.get(cal.DATE);
+	}
+	
+	/**
+	 * 현재 일을 구하는 함수
+	 * 1~9는 0을 붙여서 01~09 이며, 나머지는 2자리
+	 * @return
+	 */
+	public String getDayDD() {
+		int date = getDayInt();
+		String temp = "";
+		if(date<10) {
+			temp = "0"+date;
+		}else {
+			temp = ""+date;
+		}
+		return temp;
+	}
+	
+	/**
+	 * 오늘날자를 구하는 함수
+	 * YYYY-MM-DD
+	 * @return
+	 */
+	public String getDateYYMMDD(){
+		return getFullYearYYYY() + "-" + getMonthMM() + "-" + getDayDD();
+	}
+
+	/**
+	 * 오늘날짜를 구하는함수
+	 * YYYYMMDD
+	 * @return
+	 */
+	public String getToday() {
+		return getFullYearYYYY()  + getMonthMM() +  getDayDD();
+	}
+	
+	/**
+	 * 201810
+	 * @return
+	 */
+	public String getTimeHHmmss() {
+		SimpleDateFormat format1 = new SimpleDateFormat ( "HHmmss");
+		String formatTime1 = format1.format (System.currentTimeMillis());	
+		
+		return formatTime1;
+	}
+	
+	public String round3(String num) {
+		BigDecimal bigDec= new BigDecimal(num);
+	    DecimalFormat formatter = new DecimalFormat("0.00");
+	    return formatter.format(bigDec);
+		
+	}
+}

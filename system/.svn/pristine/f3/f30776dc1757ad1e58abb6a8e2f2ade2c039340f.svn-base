@@ -1,0 +1,11 @@
+.main-wrapper{
+	background-color: #4e73df;	
+}
+
+.card-head-center{
+	text-align:center;background-color: white;
+	padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    /* background-color: #f8f9fc; */
+    border-bottom: 1px solid #e3e6f0;
+}

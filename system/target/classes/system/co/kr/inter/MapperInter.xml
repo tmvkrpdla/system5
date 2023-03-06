@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="system.co.kr.inter.MapperInter">
+
+	<select id="getNetworkApt" resultType="Map">
+		select
+		nSeqSite,
+		SiteCode,
+		Name
+		from site
+	</select>
+		
+	<select id="getNetworkInfo" resultType="Map">
+		select
+			Dcu.nSeqSite,
+			SiteCode,
+			Name,
+			location,
+			dcuid,
+			nPortSsh2,
+			nport,
+			nPortSnmp,
+			AddressInfo,
+			LteSn,
+			ip,
+			dcu.Comment,
+			nSiteState
+		from Dcu join site on dcu.nSeqSite=site.nSeqSite
+	</select>
+	
+	<update id="updDcuInfo" parameterType="java.util.List" >
+	<foreach collection="list" item="item" index="index" >
+		update dcu join site on dcu.nSeqSite=site.nSeqSite
+	    set dcu.location = #{item.location}, dcu.nPortSsh2 = #{item.nPortSsh2} , dcu.AddressInfo = #{item.AddressInfo}, dcu.LteSn = #{item.LteSn},  dcu.Comment = #{item.Comment}, site.nSiteState ='1'  
+		where dcu.DcuId  = #{item.dcuid};
+		</foreach>
+	</update>
+	<update id="delNetwork" parameterType="String">
+		update site
+		set nSiteState = '0'
+		where  nSeqSite = #{nSeqSite}
+	</update>
+
+
+</mapper>

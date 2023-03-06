@@ -1,0 +1,21 @@
+$(function() {
+
+	//	조회 버튼
+	$("#searchBtn").on('click', function() {
+		$("#searchForm").submit();
+		//	location.href = "../apt/aptment?SeqSite="+_seqSite.val();
+	});
+
+	// 협력업체 선택
+	$("#companySelect").on('change', function() {
+		//console.log($(this).val());
+
+		var _seqCompany = $(this).val();
+		//console.log("_seqCompany = " + _seqCompany);
+		$("#SeqCompany").val(_seqCompany);
+
+	});
+	
+
+});
+

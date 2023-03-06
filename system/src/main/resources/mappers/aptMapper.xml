@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="aptMapper">
+
+	<insert id="insertCoordinate" parameterType="hashMap" useGeneratedKeys="true" keyProperty="nSeqSite" >
+		INSERT INTO 
+			site
+			(
+				Address
+				, AddressJibun
+				, dx
+				, dy
+				
+			)
+		VALUES
+			(
+				#{Address}
+				, #{AddressJibun}
+				, #{dx}
+				, #{dy}
+				
+			)
+			
+			where 
+			site.nSeqSite = #{seq_site}
+    	
+	</insert>
+	
+	
+	<select id="selectCoordinate" parameterType="hashMap" resultType="hashMap">
+	<![CDATA[
+		select
+			site.Name as sitename
+		where 
+			site.nSeqSite = 86
+	]]>
+	</select>
+	
+	
+
+</mapper>

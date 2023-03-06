@@ -1,0 +1,66 @@
+package manager.co.kr.company.controller;
+
+import java.util.HashMap;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import manager.co.kr.util.SessionUtil;
+
+@Controller
+@RequestMapping("/company")
+public class companyController {
+
+	private final Logger logger = LoggerFactory.getLogger(companyController.class);
+
+	@RequestMapping("/companyList")
+	public String companyList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "company") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "companyList") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			// System.out.println("sessionMap = " + sessionMap);
+
+			moveUrl = "company/companyList";
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+
+		}
+
+		return moveUrl;
+
+	}
+	
+	@RequestMapping("/worker")
+	public String companyWorker(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "company") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "worker") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			// System.out.println("sessionMap = " + sessionMap);
+
+			moveUrl = "company/companyWorker";
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+
+		}
+
+		return moveUrl;
+
+	}
+
+}

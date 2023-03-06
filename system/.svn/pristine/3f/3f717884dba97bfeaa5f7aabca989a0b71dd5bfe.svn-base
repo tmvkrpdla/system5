@@ -1,0 +1,304 @@
+package manager.co.kr.current.controller;
+
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import manager.co.kr.util.ManagerApi;
+import manager.co.kr.util.SessionUtil;
+
+@Controller
+@RequestMapping("/current")
+public class currentController {
+	
+	private final Logger logger = LoggerFactory.getLogger(currentController.class);
+
+	@RequestMapping("/mdmsServer")
+	public String mdmsList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "current") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "mdms") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			//	System.out.println("sessionMap = " + sessionMap);
+			
+			HashMap mdmsCountMap =  ManagerApi.getMdmsCount();
+			
+			int count_mdms = (Integer) mdmsCountMap.get("count_mdms");
+			System.out.println("count_mdms = " + count_mdms);
+			
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+			
+			HashMap resultMdmsMap = ManagerApi.getMdmsListForPaging(IndexFrom, IndexTo);
+			System.out.println("resultMdmsMap = " + resultMdmsMap);
+			
+			List list_mdms = (List) resultMdmsMap.get("list_mdms");
+			System.out.println("list_mdms = " + list_mdms);
+
+			moveUrl = "current/mdmsList";
+		
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			model.addAttribute("LIST_MDMS", list_mdms);
+
+		}
+
+		return moveUrl;
+
+	}
+	
+	@RequestMapping("/dcuList")
+	public String dcuList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "current") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "dcu") String subMenu,
+			@RequestParam(value = "SeqMdms", defaultValue = "") String SeqMdms,
+			@RequestParam(value = "SeqSite", defaultValue = "") String SeqSite,
+			@RequestParam(value = "SeqSite", defaultValue = "") String SeqDcu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			
+			HashMap mdmsCountMap =  ManagerApi.getMdmsCount();
+			int count_mdms = (Integer) mdmsCountMap.get("count_mdms");
+			//System.out.println("count_mdms = " + count_mdms);
+			
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+			
+			HashMap resultMdmsMap = ManagerApi.getMdmsListForPaging(IndexFrom, IndexTo);
+			//System.out.println("resultMdmsMap = " + resultMdmsMap);
+			
+			List list_mdms = (List) resultMdmsMap.get("list_mdms");
+			//System.out.println("list_mdms = " + list_mdms);
+			
+//			if ("".equals(SeqMdms)) {
+//				HashMap seqSiteMap = (HashMap) list_mdms.get(0);
+//				SeqMdms = String.valueOf(seqSiteMap.get("seq_mdms"));
+//				System.out.println("SeqMdms = " + SeqMdms);
+//			}
+			
+			if ("".equals(SeqSite)) {
+				SeqSite = "0";
+			}
+			
+			if ("".equals(SeqMdms)) {
+				SeqMdms = "0";
+			}
+			
+			if ("".equals(SeqDcu)) {
+				SeqDcu = "0";
+			}
+			
+			HashMap siteMap = ManagerApi.getSiteListByMdms(SeqMdms);
+			//System.out.println("resultSiteMap = " + siteMap);
+			
+			List list_site = (List) siteMap.get("list_site");
+			//System.out.println("list_site = " + list_site);
+			
+			HashMap dcuCountMap =  ManagerApi.getDcuCount(SeqMdms, SeqSite);
+			//System.out.println("dcuCountMap = " + dcuCountMap);
+			int count_dcu = (Integer) dcuCountMap.get("count_dcu");
+			//System.out.println("count_dcu = " + count_dcu);
+			
+			HashMap dcuListMap = ManagerApi.getDcuListForPaging(SeqMdms, SeqSite, IndexFrom, IndexTo);
+			//System.out.println("dcuListMap = " + dcuListMap);
+			
+			List list_dcu = (List) dcuListMap.get("list_dcu");
+			//System.out.println("list_dcu = " + list_dcu);
+
+			moveUrl = "current/dcuList";
+			
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			model.addAttribute("LIST_MDMS", list_mdms);
+			model.addAttribute("LIST_SITE", list_site);
+			model.addAttribute("LIST_DCU", list_dcu);
+			model.addAttribute("SEQMDMS", SeqMdms);
+			model.addAttribute("SEQSITE", SeqSite);
+			model.addAttribute("SEQDCU", SeqDcu);
+		}
+
+		return moveUrl;
+	}
+	
+	@RequestMapping("/modemList")
+	public String modemList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "current") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "modem") String subMenu,
+			@RequestParam(value = "SeqSite", defaultValue = "") String SeqSite,
+			@RequestParam(value= "SeqDong", defaultValue = "") String SeqDong,
+			@RequestParam(value = "SeqDcu", defaultValue = "") String SeqDcu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+			
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			
+			HashMap resultSiteCountMap =  ManagerApi.GetSiteCount();
+			//System.out.println("resultProjectCountMap = " + resultProjectCountMap);
+			int count_site = (Integer) resultSiteCountMap.get("count_site");
+			System.out.println("count_site = " + count_site);
+
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+			
+			HashMap siteMap = ManagerApi.GetSiteListForPaging(IndexFrom, count_site);
+			System.out.println("resultSiteMap = " + siteMap);
+			
+			List list_site = (List) siteMap.get("list_site");
+			System.out.println("list_site = " + list_site);
+			
+			if ("".equals(SeqSite)) {
+				SeqSite = "0";
+			}
+			
+			//	동 목록 조회
+			HashMap apt_dong_list = ManagerApi.getDongListBySite(SeqSite);
+			
+			List list_dong = (List) apt_dong_list.get("list_dong");
+			System.out.println("list_dong = " + list_dong);
+			
+//			if("".equals(seq_apt_dong)) {
+//				HashMap aptDongMap = (HashMap) list_dong.get(0);
+//				seq_apt_dong = String.valueOf(aptDongMap.get("seq_dong"));
+//			}
+			
+			// dcu 목록 조회
+			HashMap dcu_listMap = ManagerApi.getDcuListBySite(SeqSite);
+			
+			List list_dcu = (List) dcu_listMap.get("list_dcu");
+			System.out.println("list_dcu = " + list_dcu);
+			
+			if ("".equals(SeqDong)) {
+				SeqDong = "0";
+			}
+			
+			if ("".equals(SeqDcu)) {
+				SeqDcu = "0";
+			}
+			
+			// 모뎀 내용 출력
+			HashMap modemCountMap =  ManagerApi.getModemCount(SeqSite, SeqDong, SeqDcu);
+			System.out.println("modemCountMap = " + modemCountMap);
+			int count_modem = (Integer) modemCountMap.get("count_modem");
+			System.out.println("count_modem = " + count_modem);
+			
+			HashMap modemMap = ManagerApi.getModemListForPaging(SeqSite, SeqDong, SeqDcu, IndexFrom, IndexTo);
+			System.out.println("modemMap = " + modemMap);
+			
+			List list_modem = (List) modemMap.get("list_modem");
+			System.out.println("list_modem = " + list_modem);
+			
+			moveUrl = "current/modemList";
+			
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			model.addAttribute("LIST_SITE", list_site);
+			model.addAttribute("SEQSITE", SeqSite);
+			model.addAttribute("LIST_DONG", list_dong);
+			model.addAttribute("SEQ_APT_DONG", SeqDong);
+			model.addAttribute("LIST_DCU", list_dcu);
+			model.addAttribute("LIST_MODEM", list_modem);
+			model.addAttribute("SEQDCU", SeqDcu);
+
+		}
+
+		return moveUrl; 
+	}
+	
+	@RequestMapping("/meterList")
+	public String meterList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "current") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "meter") String subMenu,
+			@RequestParam(value = "SeqSite", defaultValue = "") String SeqSite,
+			@RequestParam(value = "SeqDong", defaultValue = "") String SeqDong,
+			@RequestParam(value = "SeqDcu", defaultValue = "") String SeqDcu) throws Exception {
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			
+			HashMap resultSiteCountMap =  ManagerApi.GetSiteCount();
+			//System.out.println("resultProjectCountMap = " + resultProjectCountMap);
+			int count_site = (Integer) resultSiteCountMap.get("count_site");
+			System.out.println("count_site = " + count_site);
+
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+			
+			HashMap siteMap = ManagerApi.GetSiteListForPaging(IndexFrom, count_site);
+			System.out.println("resultSiteMap = " + siteMap);
+			
+			List list_site = (List) siteMap.get("list_site");
+			System.out.println("list_site = " + list_site);
+			
+			if ("".equals(SeqSite)) {
+				SeqSite = "0";
+			}
+			
+			//	동 목록 조회
+			HashMap apt_dong_list = ManagerApi.getDongListBySite(SeqSite);
+			
+			List list_dong = (List) apt_dong_list.get("list_dong");
+			System.out.println("list_dong = " + list_dong);
+			
+			// dcu 목록 조회
+			HashMap dcu_listMap = ManagerApi.getDcuListBySite(SeqSite);
+			
+			List list_dcu = (List) dcu_listMap.get("list_dcu");
+			System.out.println("list_dcu = " + list_dcu);
+			
+			if ("".equals(SeqDong)) {
+				SeqDong = "0";
+			}
+			
+			if ("".equals(SeqDcu)) {
+				SeqDcu = "0";
+			}
+			
+			// 계량기 내용 출력
+			HashMap meterCountMap =  ManagerApi.getMeterCount(SeqSite, SeqDong, SeqDcu);
+			System.out.println("meterCountMap = " + meterCountMap);
+			int count_meter = (Integer) meterCountMap.get("count_meter");
+			System.out.println("count_meter = " + count_meter);
+			
+			HashMap meterMap = ManagerApi.getMeterListForPaging(SeqSite, SeqDong, SeqDcu, IndexFrom, IndexTo);
+			System.out.println("meterMap = " + meterMap);
+			
+			List list_meter = (List) meterMap.get("list_meter");
+			System.out.println("list_meter = " + list_meter);
+
+			moveUrl = "current/meterList";
+			
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			model.addAttribute("LIST_SITE", list_site);
+			model.addAttribute("SEQSITE", SeqSite);
+			model.addAttribute("LIST_DONG", list_dong);
+			model.addAttribute("SEQ_APT_DONG", SeqDong);
+			model.addAttribute("LIST_DCU", list_dcu);
+			model.addAttribute("SEQDCU", SeqDcu);
+			model.addAttribute("LIST_METER", list_meter);
+
+		}
+
+		return moveUrl; 
+	}
+}

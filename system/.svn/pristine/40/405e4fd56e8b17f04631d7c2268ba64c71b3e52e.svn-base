@@ -1,0 +1,87 @@
+package manager.co.kr.site.controller;
+
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import manager.co.kr.util.Api;
+import manager.co.kr.util.PageUtil;
+import manager.co.kr.util.SessionUtil;
+
+
+
+@Controller
+@RequestMapping("/site")
+public class SiteController {
+
+	private static final Logger logger = LoggerFactory.getLogger(SiteController.class);
+	 
+	// 현장 사진 조회
+	@RequestMapping("/photoList")
+	public String photoList(HttpSession session,
+			@RequestParam(value = "mainMenu", defaultValue = "manager") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "photoList") String subMenu,
+			@RequestParam(value = "nowPage", defaultValue = "1") int nowPage,
+			@RequestParam(value = "seq_project", defaultValue = "0") String seq_project, /* 공사 종류 */
+			@RequestParam(value = "seq_job_code", defaultValue = "0") String seq_job_code, /* 공종 코드 */
+			@RequestParam(value = "date_work", defaultValue = "") String date_work, /* 작성일 */
+			@RequestParam(value = "seq_member", defaultValue = "0") String seq_member, /* 작성자 */
+			Model model) throws Exception {
+
+		String moveUrl = "redirect:/";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap<String, Object> projectCntMap = Api.getProjectCount("");
+			int project_count = (Integer) projectCntMap.get("project_count");
+
+			// 공사 목록 보여주기	:	SELECT 목록
+			HashMap<String, Object> projectMap = Api.getProjectListForPaging("", 1, project_count);
+
+			// 공종번호
+			HashMap<String, Object> jopCodeMap = Api.getJobCodeList();
+
+			// 갯수를 구하기
+			HashMap<String, Object> mmsCntMap = Api.getMmsCount(seq_project, seq_member, seq_job_code,
+					date_work.replaceAll("-", ""));
+
+			int mmsTotcnt = (Integer) mmsCntMap.get("mms_count");
+
+			PageUtil pageUtil = new PageUtil(nowPage, mmsTotcnt, 10);
+
+			HashMap<String, Object> mmsListMap = Api.getMmsListForPaging(seq_project, seq_member, seq_job_code,
+					date_work.replaceAll("-", ""), pageUtil.getStartNum(), pageUtil.getEndNum());
+			List mms_list = (List) mmsListMap.get("mms_list");
+
+			moveUrl = "site/photoList";
+
+			// 처음 default 데이터
+			model.addAttribute("SEQ_PROJECT", seq_project);
+			model.addAttribute("SEQ_JOB_CODE", seq_job_code);
+			model.addAttribute("DATE_WORK", date_work);
+
+			model.addAttribute("PAGEUTIL", pageUtil); // 페이징
+			model.addAttribute("MMS_LIST", mms_list); // 조회 데이터
+
+			model.addAttribute("PROJECT_LIST", projectMap.get("project_list")); // 공사 목록
+
+			model.addAttribute("LIST_JOB_CODE", jopCodeMap.get("list_job_code")); // 공종번호 코드
+
+			model.addAttribute("nowPage", nowPage); // 현재 페이지
+			model.addAttribute("mainMenu", mainMenu); // 메인 메뉴
+			model.addAttribute("subMenu", subMenu); // 서브 메뉴
+		}
+
+		return null;
+
+	}
+
+}

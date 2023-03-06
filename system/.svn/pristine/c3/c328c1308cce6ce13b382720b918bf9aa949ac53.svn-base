@@ -1,0 +1,113 @@
+window.onload = function main(id3, id4) {
+    var tag = "<table id='example-table-1' border='1'>";
+   
+    var id3 = opener.$(".modCon").val();
+    var b1 = parseInt(id3);
+ 
+    var id4 = opener.window.$("._oneFloorHo").val();
+    var b2 = parseInt(id4);
+    
+    var seqSite = opener.window.$("#seqSite").val();
+    console.log("@@@ seqSite @@@= " + seqSite);
+    
+    for (j = 1; j <= b1; j++) {
+      tag += "<tr class='delTrHoEvt'>";
+      for (i = 1; i <= b2; i++) {
+        tag += "<td class='delTdHoEvt'>"
+      //  	+j+"0"+i
+        	+ "<input type='text' name='seq_ho' class='seq_ho' value=" + j + "0" + i + ">"
+        	+ "<input type='button' name='delHoBtn' class='delHoBtn' value='X'>"
+        	+ "</td>";
+      }
+      tag += "</tr>";
+    }
+   //style='display: none;'
+    
+    
+    tag += "</table>";
+    area.innerHTML = tag;
+    
+    // 미사용 호 삭제
+    function delHo() {
+		var _delHoEvt = document.getElementsByClassName('delHoBtn');
+
+		for (var i = 0; i < _delHoEvt.length; i++) {
+			_delHoEvt[i].onclick = function() {
+//				var _ho = $(this).parents('tr.delTrHoEvt').find('.seq_ho').val();
+//				console.log("_ho = " + _ho);
+				var _selDelho = $(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").val();
+				console.log("_selDelho = " + _selDelho);
+				$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").attr("disabled", true).removeAttr('class');
+				//$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").remove();
+				//$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").removeAttr('class');
+			}
+
+		}
+
+//		var str = ""
+//		var tdArr = new Array(); // 배열선언
+//
+//		var tr = $("#example-table-1").children();
+//		console.log("tr = " + tr);
+//		var td = tr.children();
+//		var input = td.find("input[class='seq_ho']");
+//		// var input = td.find("input[disabled='false']");
+//
+//		input.each(function(i) {
+//			tdArr.push(input.eq(i).val());
+//		});
+//		console.log("배열에 담긴 값 :2 " + tdArr);
+	};
+	
+	delHo();
+		//$("#actSaveBtn").on('click', function() {
+		$("#actSaveBtn").click(function() {
+			//console.log("저장버튼클릭");
+			
+			var seqSite = opener.window.$("#seqSite").val();
+		   // console.log("!!! seqSite @@@= " + seqSite);
+		    
+//			var _seqSite = $(".seqSite").val();
+//			console.log("_seqSite = " + _seqSite);
+			
+		    var dongName = opener.window.$(".modDongName").val();
+		   // console.log("dongName = " + dongName);
+
+		var str = ""
+		var tdArr = new Array(); // 배열선언
+
+		var tr = $("#example-table-1").children();
+		console.log("tr = " + tr);
+		var td = tr.children();
+		var input = td.find("input[class='seq_ho']");
+		// var input = td.find("input[disabled='false']");
+		//console.log("~~~input = " + input.val());
+
+		//console.log("모든 데이터 : " + tr.text());
+
+		input.each(function(i) {
+			tdArr.push(input.eq(i).val());
+		});
+
+		//console.log("배열에 담긴 값 : " + tdArr);
+		
+		var str1 = tdArr.join();
+		//console.log("str1 = " + str1);
+		
+		var _resDong = enernet.modules.api.addDong(seqSite, dongName, str1);
+		//console.log("동 저장 _res = " + _resDong); 
+		
+		if(_resDong.seq_dong > 0){
+			alert("저장에 성공하였습니다.");
+			window.close();
+		}
+		else{
+			alert("저장에 실패하였습니다.");
+		}
+	});
+}
+// $(function() {
+// // 미사용 호 삭제
+//	console.log("^^^^^^^^^");
+//	
+//});

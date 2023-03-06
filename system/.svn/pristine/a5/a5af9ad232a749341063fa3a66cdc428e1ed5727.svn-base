@@ -1,0 +1,858 @@
+package manager.co.kr.util;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ManagerApi {
+
+	private static final String apiUrl = "https://www.egservice.co.kr:18513/api";
+	//private static final String apiUrl = "https://www.kepcosafety.co.kr:6187/KepcoSafety";
+	
+	
+	// 아파트 단지
+	public static HashMap<String, Object> GetSiteCount() throws Exception{
+
+		String targetUrl = apiUrl + "/GetSiteCount";
+		
+		return sendPost(targetUrl, "");
+	};
+	
+	public static HashMap<String, Object> GetSiteListForPaging(int IndexFrom, int IndexTo) throws Exception {
+
+		String targetUrl = apiUrl + "/GetSiteListForPaging";
+		String parameters = "IndexFrom=" + IndexFrom;
+		parameters += "&IndexTo=" + IndexTo;
+
+		return sendPost(targetUrl, parameters);
+	}
+	
+	public static HashMap<String, Object> getDongHoCount(String SeqSite) throws Exception{
+
+		String targetUrl = apiUrl + "/GetDongHoCount";
+		String parameters = "SeqSite=" + SeqSite;
+
+		return sendPost(targetUrl, parameters);
+	}
+	
+	public static HashMap<String, Object> getDongHoListForPaging(String SeqSite, int IndexFrom, int IndexTo) throws Exception{
+
+		String targetUrl = apiUrl + "/GetDongHoListForPaging";
+		String parameters = "SeqSite=" + SeqSite;
+		parameters += "&IndexFrom=" + IndexFrom;
+		parameters += "&IndexTo=" + IndexTo;
+
+		return sendPost(targetUrl, parameters);
+	}
+	
+	//mdms
+	public static HashMap<String, Object> getMdmsCount() throws Exception{
+
+		String targetUrl = apiUrl + "/GetMdmsCount";
+		
+		return sendPost(targetUrl, "");
+	};
+	
+	public static HashMap<String, Object> getMdmsListForPaging(int IndexFrom, int IndexTo) throws Exception {
+
+		String targetUrl = apiUrl + "/GetMdmsListForPaging";
+		String parameters = "IndexFrom=" + IndexFrom;
+		parameters += "&IndexTo=" + IndexTo;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	// 협력업체
+	public static HashMap<String, Object> getCompanyCount() throws Exception {
+
+		String targetUrl = apiUrl + "/GetCompanyCount";
+
+		return sendPost(targetUrl, "");
+	};
+	
+	public static HashMap<String, Object> getCompanyListForPaging(int IndexFrom, int IndexTo) throws Exception {
+
+		String targetUrl = apiUrl + "/GetCompanyListForPaging";
+		String parameters = "IndexFrom=" + IndexFrom;
+		parameters += "&IndexTo=" + IndexTo;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	public static HashMap<String, Object> getSiteListByMdms(String SeqMdms) throws Exception {
+
+		String targetUrl = apiUrl + "/GetSiteListByMdms";
+		String parameters = "SeqMdms=" + SeqMdms;
+
+		return sendPost(targetUrl, parameters);
+	}
+	
+	//mdms
+	public static HashMap<String, Object> getDcuCount(String SeqMdms, String SeqSite) throws Exception{
+
+		String targetUrl = apiUrl + "/GetDcuCount";
+		
+		String parameters = "SeqMdms=" + SeqMdms;
+		parameters += "&SeqSite=" + SeqSite;
+			
+		return sendPost(targetUrl, parameters);
+	};
+
+	public static HashMap<String, Object> getDcuListForPaging(String SeqMdms, String SeqSite, int IndexFrom, int IndexTo) throws Exception {
+
+		String targetUrl = apiUrl + "/GetDcuListForPaging";
+		String parameters = "SeqMdms=" + SeqMdms;
+		parameters += "&SeqSite=" + SeqSite;
+		parameters += "&IndexFrom=" + IndexFrom;
+		parameters += "&IndexTo=" + IndexTo;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	// 모뎀
+	public static HashMap<String, Object> getModemCount(String SeqSite, String SeqDong, String SeqDcu) throws Exception{
+
+		String targetUrl = apiUrl + "/GetModemCount";
+		String parameters = "SeqSite=" + SeqSite;
+		parameters += "&SeqDong=" + SeqDong;
+		parameters += "&SeqDcu=" + SeqDcu;
+			
+		return sendPost(targetUrl, parameters);
+	};
+	
+	public static HashMap<String, Object> getModemListForPaging(String SeqSite, String SeqDong, String SeqDcu, int IndexFrom, int IndexTo) throws Exception {
+
+		String targetUrl = apiUrl + "/GetModemListForPaging";
+		String parameters = "SeqSite=" + SeqSite;
+		parameters += "&SeqDong=" + SeqDong;
+		parameters += "&SeqDcu=" + SeqDcu;
+		parameters += "&IndexFrom=" + IndexFrom;
+		parameters += "&IndexTo=" + IndexTo;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	public static HashMap<String, Object> getDongListBySite(String SeqSite) throws Exception {
+
+		String targetUrl = apiUrl + "/GetDongListBySite";
+		String parameters = "SeqSite=" + SeqSite;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	public static HashMap<String, Object> getDcuListBySite(String SeqSite) throws Exception {
+
+		String targetUrl = apiUrl + "/GetDcuListBySite";
+		String parameters = "SeqSite=" + SeqSite;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	//계량기
+	public static HashMap<String, Object> getMeterCount(String SeqSite, String SeqDong, String SeqDcu) throws Exception{
+
+		String targetUrl = apiUrl + "/GetMeterCount";
+		String parameters = "SeqSite=" + SeqSite;
+		parameters += "&SeqDong=" + SeqDong;
+		parameters += "&SeqDcu=" + SeqDcu;
+			
+		return sendPost(targetUrl, parameters);
+	};
+	
+	public static HashMap<String, Object> getMeterListForPaging(String SeqSite, String SeqDong, String SeqDcu, int IndexFrom, int IndexTo) throws Exception {
+
+		String targetUrl = apiUrl + "/GetMeterListForPaging";
+		String parameters = "SeqSite=" + SeqSite;
+		parameters += "&SeqDong=" + SeqDong;
+		parameters += "&SeqDcu=" + SeqDcu;
+		parameters += "&IndexFrom=" + IndexFrom;
+		parameters += "&IndexTo=" + IndexTo;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	// 설치작업자
+	public static HashMap<String, Object> getWorkerCount(String SeqCompany) throws Exception {
+
+		String targetUrl = apiUrl + "/GetWorkerCount";
+		String parameters = "SeqCompany=" + SeqCompany;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	public static HashMap<String, Object> getWorkerListForPaging(String SeqCompany, int IndexFrom, int IndexTo) throws Exception {
+
+		String targetUrl = apiUrl + "/GetWorkerListForPaging";
+		String parameters = "SeqCompany=" + SeqCompany;
+		parameters += "&IndexFrom=" + IndexFrom;
+		parameters += "&IndexTo=" + IndexTo;
+
+		return sendPost(targetUrl, parameters);
+	};
+	
+	
+	
+	
+	
+	
+	
+	
+//	==========	로그인 및 정보	==========	
+	/**
+	 * 한전 운영자 로그인
+	 * @param Id
+	 * @param Password
+	 * @return
+	 * @throws Exception
+	 * 
+		seq_admin == 0 이면 실패
+	 */
+	public static HashMap<String, Object> checkAdminLogin(String Id, String Password) throws Exception{
+
+		String targetUrl = apiUrl + "/CheckAdminLogin";
+		String parameters = "Id=" + Id;
+		parameters += "&Password=" + Password;
+		
+		return sendPost(targetUrl, parameters);
+	};
+	
+	
+	/**
+	 * 한전운영자 정보
+	 * @param SeqAdmin
+	 * @return
+	 * @throws Exception
+	 	
+		seq_admin
+		admin_id
+		admin_name
+		admin_rank 직급
+		admin_phone
+		admin_mail
+		time_created
+		time_modified
+		time_last_login = 최근 로그인 시간
+
+	 */
+	public static HashMap<String, Object> getAdminInfo(String SeqAdmin) throws Exception{
+
+		String targetUrl = apiUrl + "/GetAdminInfo";
+		String parameters = "SeqAdmin" +"=" + SeqAdmin;
+		
+		return sendPost(targetUrl, parameters);
+	};
+//	==========	로그인 및 정보 끝		==========
+	
+	
+//	==========	공사	==========	
+	/**
+	 * 공사 아이디 중복확인
+	 * @param ProcectId
+	 * @return
+	 * @throws Exception
+	 * 
+	 * result_code : 0 = 중복 없음 , 1 = 중복있음
+	 * count : 중복갯수
+	 */
+	public static HashMap<String, Object> isExistProjectId(String ProjectId) throws Exception{
+
+		String targetUrl = apiUrl + "/IsExistProjectId";
+		String parameters = "ProjectId" +"=" + ProjectId;
+		
+		return sendPost(targetUrl, parameters);
+	};
+	
+	/**
+	 * 공사 만들기
+	 * @param Id
+	 * @param Name
+	 * @param Company
+	 * @param dx
+	 * @param dy
+	 * @param Address
+	 * @param DateContraction
+	 * @param DateBegin
+	 * @param DateEnd
+	 * @param Comment
+	 * @return
+	 * @throws Exception
+	 	result_code : 0=실패, 1=성공 
+		seq_project_inserted : 생성실패면 -1, 성공하면 생성된 SeqProject
+
+	 */
+	public static HashMap<String, Object> createProject(String Id, String Name, String Company, String dx, String dy, String Address, 
+			String DateContraction, String DateBegin, String DateEnd, String Comment) throws Exception{
+		//	dx, dy	= 0입력
+		String targetUrl = apiUrl + "/CreateProject";
+		String parameters = "Id" +"=" + Id;
+		parameters += "&Name="+Name;
+		parameters += "&Company="+Company;
+		parameters += "&dx="+dx;
+		parameters += "&dy="+dy;
+		parameters += "&Address="+Address;
+		parameters += "&DateContraction="+DateContraction;
+		parameters += "&DateBegin="+DateBegin;
+		parameters += "&DateEnd="+DateEnd;
+		parameters += "&Comment="+Comment;
+		
+		return sendPost(targetUrl, parameters);
+	};
+	
+	/**
+	 * 공사 개수
+	 * @param DateRef
+	 * @return
+	 * @throws Exception
+	 * 
+		DateRef = “DateRef=20200514” 이면 2020/05/14 를 공사기간으로 포함하는 모든 공사 갯수 리턴됨.
+		 ‘’ 이면 해당조건은 무시됨. 예를 들어 “DateRef=” 이면 모든 공사를 리턴함
+	 */
+	public static HashMap<String, Object> getProjectCount(String DateRef) throws Exception{
+
+		String targetUrl = apiUrl + "/GetProjectCount";
+		
+		return sendPost(targetUrl, "");
+	};
+	
+
+	/**
+	 * 공사 삭제
+	 * @param SeqProject
+	 * @return
+	 * @throws Exception
+	 	
+		SeqProject : 삭제하려는 공사의 Seq.
+		
+		result_code : 0=실패, 1=성공 
+
+	 */
+	public static HashMap<String, Object> deleteProject(String SeqProject) throws Exception{
+
+		String targetUrl = apiUrl + "/DeleteProject";
+		String parameters = "SeqProject" +"=" + SeqProject;
+		
+		return sendPost(targetUrl, parameters);
+	};
+	
+	/**
+	 * 공사 수정
+	 * @param SeqProject
+	 * @param Id
+	 * @param Name
+	 * @param Company
+	 * @param dx
+	 * @param dy
+	 * @param Address
+	 * @param DateContraction
+	 * @param DateBegin
+	 * @param DateEnd
+	 * @param Comment
+	 * @return
+	 * @throws Exception
+	 * 
+	 result_code : 0=실패, 1=성공 
+
+	 */
+	public static HashMap<String, Object> modifyProject(String SeqProject , String Id, String Name, String Company, String dx, String dy, String Address, 
+			String DateContraction, String DateBegin, String DateEnd, String Comment) throws Exception{
+		
+		String targetUrl = apiUrl + "/ModifyProject";
+		String parameters = "SeqProject=" + SeqProject ; 
+		parameters += "&Id=" + Id;
+		parameters += "&Name="+Name;
+		parameters += "&Company="+Company;
+		parameters += "&dx="+dx;
+		parameters += "&dy="+dy;
+		parameters += "&Address="+Address;
+		parameters += "&DateContraction="+DateContraction;
+		parameters += "&DateBegin="+DateBegin;
+		parameters += "&DateEnd="+DateEnd;
+		parameters += "&Comment="+Comment;
+		
+		return sendPost(targetUrl, parameters);
+	};
+	
+	/**
+	 * 공사 페이징
+	 * @param DateRef
+	 * @param IndexFrom
+	 * @param IndexTo
+	 * @return
+	 [project_list]
+		index
+		seq_project
+		project_id
+		project_name
+		project_company = 시공사
+		dx
+		dy
+		project_address
+		project_contraction = 공사 계약일
+		project_begin = 공사 시작일
+		project_end = 공사 종료일
+		project_comment
+		project_time_created
+		project_time_modified
+
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getProjectListForPaging (String DateRef, int IndexFrom, int IndexTo) throws Exception{
+		
+		String targetUrl = apiUrl + "/GetProjectListForPaging";
+		String parameters = "DateRef=" +  DateRef;
+		parameters += "&IndexFrom="+IndexFrom;
+		parameters += "&IndexTo="+IndexTo;
+		
+		return sendPost(targetUrl, parameters);
+	}
+//	==========	공사 끝	==========		
+
+	
+//	==========	현장 소장	==========
+	/**
+	 * 현장 인원 구하기
+	 * 		count_member	총 수
+	 * 		count_director	현장 소장
+	 * 		count_worker	id 미등록
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getMemberCount ( ) throws Exception{
+		String targetUrl = apiUrl + "/GetMemberCount";
+		
+		
+		return sendPost(targetUrl, "");
+	}
+	
+	public static HashMap<String, Object> getMemberListForPaging( int IndexFrom, int IndexTo) throws Exception{ 
+		String targetUrl = apiUrl + "/GetMemberListForPaging";
+		String parameters = "IndexFrom="+IndexFrom;
+		parameters += "&IndexTo="+IndexTo;
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+	/**
+	 * 현장 소장 폰 번호 중복 체크
+	 * @param MemberPhone
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> IsExistMemberPhone(String MemberPhone) throws Exception{ 
+		String targetUrl = apiUrl + "/IsExistMemberPhone";
+		String parameters = "MemberPhone="+MemberPhone;
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+	/**
+	 * 현장감독 아이디 중복확인
+	 * @param MemberId
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> IsExistMemberId(String MemberId) throws Exception{ 
+		String targetUrl = apiUrl + "/IsExistMemberId";
+		String parameters = "MemberId="+MemberId;
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+	/**
+	 * 현장 감독 등록
+	 * @param Id
+	 * @param Password
+	 * @param Name
+	 * @param Phone
+	 * @param Mail
+	 * @param Company
+	 * @param Rank
+	 * @return
+	 	result_code : 0=실패, 1=성공 
+		seq_director_inserted : 생성실패면 -1, 성공하면 생성된 SeqDirector
+
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> createDirector(String Id, String Password, String Name, String Phone, String Mail,
+			String Company, String Rank) throws Exception{
+		
+		String targetUrl = apiUrl + "/CreateDirector";
+		
+		String parameters = "Id=" + Id;
+		
+		parameters += "&Password="+Password;
+		parameters += "&Name="+Name;
+		parameters += "&Phone="+Phone;
+		parameters += "&Mail="+Mail;
+		parameters += "&Company="+Company;
+		parameters += "&Rank="+Rank;
+		
+		return sendPost(targetUrl, parameters);
+	}
+	
+	/**
+	 * 현장감독 삭제
+	 * @param 
+	 * @return
+	 	result_code : 0=실패, 1=성공 
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> deleteMember (String SeqMember) throws Exception{
+		String targetUrl = apiUrl + "/DeleteMember";
+		
+		String parameters = "SeqMember=" + SeqMember;
+		
+		return sendPost(targetUrl, parameters);
+	}
+	
+	/**
+	 * 현장감독 수정하기
+	 * @param SeqDirector
+	 * @param Id
+	 * @param Name
+	 * @param Phone
+	 * @param Mail
+	 * @param Company
+	 * @param Rank
+	 * @return
+	 	result_code : 0=실패, 1=성공 
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> ModifyDirector(String SeqDirector, String Id, String Name, String Phone, String Mail,
+			String Company, String Rank) throws Exception{
+		
+		String targetUrl = apiUrl + "/ModifyDirector";
+		
+		String parameters = "Id=" + Id;
+		parameters += "&Name="+Name;
+		parameters += "&Phone="+Phone;
+		parameters += "&Mail="+Mail;
+		parameters += "&Company="+Company;
+		parameters += "&Rank="+Rank;
+		parameters += "&SeqDirector="+SeqDirector;
+		
+		return sendPost(targetUrl, parameters);
+	}
+	
+	
+	/**
+	 * 특정 프로젝트의 현장 소장 / 작업자 목록
+	 * @param SeqProject
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getMemberListForProject (String SeqProject) throws Exception{
+		String targetUrl = apiUrl + "/GetMemberListForProject";
+		
+		String parameters = "SeqProject=" + SeqProject;
+		
+		return sendPost(targetUrl, parameters);
+	}
+	
+
+//	==========	현장 소장 끝	==========	
+	
+//	==========	모니터링 MMS	==========	
+	
+	/**
+	 * 공종코드 목록
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getJobCodeList() throws Exception{
+		String targetUrl = apiUrl + "/GetJobCodeList";
+		String parameters = "";			
+		return sendPost(targetUrl, parameters);
+	}
+	
+	/**
+	 * 모니터링 MMS 종류 ( 현장 사진 조회 : 보고서 종류)
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getMmsTypeList() throws Exception{
+		String targetUrl = apiUrl + "/GetMmsTypeList";
+		String parameters = "";
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+	/**
+	 * 전송한 모니터링 MMS 개수
+	 * @param SeqProject
+	 * @param SeqMember
+	 * @param SeqJobCode
+	 * @param DateWork
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getMmsCount(String SeqProject, String SeqMember, String SeqJobCode, String DateWork) throws Exception{
+		String targetUrl = apiUrl + "/GetMmsCount";
+		String parameters = "SeqProject="+SeqProject;
+		parameters += "&SeqMember="+SeqMember;
+		parameters += "&SeqJobCode="+SeqJobCode;
+		parameters += "&DateWork="+DateWork;
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+	/**
+	 * 전송한 모니터링 MMS 목록
+	 * @param SeqProject
+	 * @param SeqMember
+	 * @param SeqJobCode
+	 * @param DateWork
+	 * @param IndexFrom
+	 * @param IndexTo
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getMmsListForPaging(String SeqProject, String SeqMember, String SeqJobCode, String DateWork, int IndexFrom, int IndexTo) throws Exception{
+		String targetUrl = apiUrl + "/GetMmsListForPaging";
+		String parameters = "SeqProject="+SeqProject;
+		parameters += "&SeqMember="+SeqMember;
+		parameters += "&SeqJobCode="+SeqJobCode;
+		parameters += "&DateWork="+DateWork;
+		parameters += "&IndexFrom="+IndexFrom;
+		parameters += "&IndexTo="+IndexTo;
+				
+		return sendPost(targetUrl, parameters);
+	}
+//	==========	모니터링 MMS 끝		==========
+	
+	
+//	==========	안전점검보고	==========
+	/**
+	 * 안전점검보고 목록 총 갯수 구하기
+	 * @param SeqProject
+	 * @param SeqMember
+	 * @param ReportType
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getReportCount(String SeqProject, String SeqMember, String ReportType) throws Exception{
+		String targetUrl = apiUrl + "/GetReportCount";
+		String parameters = "SeqProject="+SeqProject;
+		parameters += "&SeqMember="+SeqMember;
+		parameters += "&ReportType="+ReportType;
+				
+		return sendPost(targetUrl, parameters);
+	}	
+	
+	/**
+	 * 안전점검보고 목록 리스트
+	 * @param SeqProject
+	 * @param SeqMember
+	 * @param ReportType
+	 * @param IndexFrom
+	 * @param IndexTo
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getReportListForPaging(String SeqProject, String SeqMember, String ReportType, int IndexFrom, int IndexTo) throws Exception{
+		String targetUrl = apiUrl + "/GetReportListForPaging";
+		String parameters = "SeqProject="+SeqProject;
+		parameters += "&SeqMember="+SeqMember;
+		parameters += "&ReportType="+ReportType;
+		parameters += "&IndexFrom="+IndexFrom;
+		parameters += "&IndexTo="+IndexTo;
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+//	==========	안전점검보고 끝	==========
+
+//	==========	공지사항	==========
+	
+	/**
+	 * 공지사항 총 갯수
+	 * @param Type 
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getNoticeCount(int Type) throws Exception{
+
+		String targetUrl = apiUrl + "/GetNoticeCount";
+		String parameters = "Type="+Type;
+		
+		return sendPost(targetUrl, parameters);
+	};
+	
+	/**
+	 * 공지사항 페이징
+	 * @param IndexFrom
+	 * @param IndexTo
+	 * @param Type 
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getNoticeListForPaging(int IndexFrom, int IndexTo, int Type) throws Exception{ 
+		String targetUrl = apiUrl + "/GetNoticeListForPaging";
+		String parameters = "IndexFrom="+IndexFrom;
+		parameters += "&IndexTo="+IndexTo;
+		parameters += "&Type="+Type;
+				
+		return sendPost(targetUrl, parameters);
+	} 
+	
+	/**
+	 * 공지사항 저장
+	 * @param SeqAdmin
+	 * @param Top			Top : 상단고정 여부 (0/1)	0:고정아님
+	 * @param Title
+	 * @param Content
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> createNotice(String SeqAdmin, String Top, String Title, String Content) throws Exception{ 
+		String targetUrl = apiUrl + "/CreateNotice";
+		String parameters = "SeqAdmin="+SeqAdmin;
+		parameters += "&Top="+Top;
+		parameters += "&Title="+Title;
+		parameters += "&Content="+Content;
+				
+		return sendPost(targetUrl, parameters);
+	} 
+	
+	/**
+	 * 공지사항 삭제
+	 * @param SeqNotice
+	 * @param SeqAdmin
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> deleteNotice(String SeqNotice, String SeqAdmin) throws Exception{ 
+		String targetUrl = apiUrl + "/DeleteNotice";
+		String parameters = "SeqNotice="+SeqNotice;
+		parameters += "&SeqAdmin="+SeqAdmin;
+				
+		return sendPost(targetUrl, parameters);
+	}
+
+//	==========	공지사항 끝	==========
+	
+	
+//	==========	MMS 문자 전송 번호	==========
+	/**
+	 * MMS 전송할 번호 가져오기
+	 * @return
+	 * @throws Exception
+	 */
+	public static HashMap<String, Object> getMmsTarget() throws Exception{ 
+		String targetUrl = apiUrl + "/GetMmsTarget";
+		
+		return sendPost(targetUrl, "");
+	}
+//	==========	MMS 문자 전송 번호 	끝	==========	
+	
+//	==========	설문조사	==========	
+	
+	//	설문조사 목록 호출
+	public static HashMap<String, Object> getSurveyList() throws Exception {
+		
+		String targetUrl = apiUrl + "/GetSurveyList";
+		
+		return sendPost(targetUrl, "");
+	}
+	
+	//	설문지 데이터 조회
+	public static HashMap<String, Object> getSurveyInfo(String SeqSurvey) throws Exception{ 
+		String targetUrl = apiUrl + "/GetSurveyInfo";
+		String parameters = "SeqSurvey="+SeqSurvey;
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+	//	설문 삭제
+	public static HashMap<String, Object> deleteSurvey(String SeqSurvey) throws Exception{ 
+		String targetUrl = apiUrl + "/DeleteSurvey";
+		String parameters = "SeqSurvey="+SeqSurvey;
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+	//	설문 지문 삭제
+	public static HashMap<String, Object> deleteQuestion(String SeqQuestion) throws Exception{ 
+		String targetUrl = apiUrl + "/DeleteQuestion";
+		String parameters = "SeqQuestion="+SeqQuestion;
+				
+		return sendPost(targetUrl, parameters);
+	}
+	
+	//	설문 지문 문항 삭제
+	public static HashMap<String, Object> deleteItem(String SeqItem) throws Exception{ 
+		String targetUrl = apiUrl + "/DeleteItem";
+		String parameters = "SeqItem="+SeqItem;
+				
+		return sendPost(targetUrl, parameters);
+	}	
+	
+//	==========	설문조사 	끝	==========
+	/**
+	 * HashMap<String, Object> 로 데이터 리턴
+	 * 포스트 요청
+	 * @param targetUrl
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	private static HashMap<String, Object> sendPost(String targetUrl, String parameters) throws Exception {
+		
+		//logger.info(targetUrl);
+		//logger.info(parameters);
+		
+		HashMap<String, Object> returnMap = null;
+		
+		URL url = new URL(targetUrl);
+		HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+
+		con.setRequestMethod("POST"); // HTTP POST 메소드 설정
+
+		con.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+		con.setRequestProperty("Accept-Charset", "UTF-8");
+
+		con.setDoOutput(true); // POST 파라미터 전달을 위한 설정 // Send post request
+
+		OutputStream os = con.getOutputStream();
+		os.write(parameters.getBytes());
+		//System.out.println(parameters);
+		os.flush();
+		os.close();
+		
+		if (con.getResponseCode() == 200) {
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+			String inputLine;
+
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+
+			in.close();
+
+			ObjectMapper mapper = new ObjectMapper();
+			//	ajax 호출로 된 데이터가 맵에 전환 되어 담겨진다.
+			
+			returnMap = mapper.readValue(response.toString(), new TypeReference<HashMap<String, Object>>() {});
+			//System.out.println(returnMap.toString());
+			
+		}
+		
+		return returnMap;
+	}
+
+}

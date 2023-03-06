@@ -1,0 +1,66 @@
+package manager.co.kr.admin.apt.controller;
+
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import manager.co.kr.util.SessionUtil;
+
+@Controller
+@RequestMapping("/apt")
+public class aptController {
+
+	private final Logger logger = LoggerFactory.getLogger(aptController.class);
+
+	@RequestMapping("/estate")
+	public String aptEstate(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "manager") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "estate") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+//			System.out.println("sessionMap = " + sessionMap);
+
+			moveUrl = "apt/aptEstate";
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+
+		}
+
+		return moveUrl;
+
+	}
+	
+	@RequestMapping("/aptment")
+	public String aptment(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "manager") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "aptment") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+
+			moveUrl = "apt/aptment";
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+
+		}
+
+		return moveUrl;
+
+	}
+
+}

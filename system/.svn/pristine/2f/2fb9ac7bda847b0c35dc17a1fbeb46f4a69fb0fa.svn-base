@@ -1,0 +1,424 @@
+/**
+ * 2020.04.17
+ * v 2.1.1
+ */
+var enernet = enernet || {};
+enernet.namespace = function(ns_string) {
+	var parts = ns_string.split('.'), parent = enernet, i;
+	if (parts[0] === "enernet") {
+		parts = parts.slice(1);
+	}
+	for (i = 0; i < parts.length; i += 1) {
+		if (typeof parent[parts[i]] === "undefined") {
+			parent[parts[i]] = {};
+		}
+		parent = parent[parts[i]];
+	}
+	return parent;
+}
+
+enernet.namespace('enernet.modules.api');
+//api === ENERNET.modules.api; // true
+
+
+enernet.modules.api = function() {
+	//	======================================================================	//
+	//	private
+	//	api url 기본 주소
+	var _apiUrl = "https://www.egservice.co.kr:18513";
+	var _aptapiUrl = "https://www.egservice.co.kr:3187";
+	
+	//	api 요청시 사용 되는 함수
+	//	async false 동기	url, data, func, '', '', 'false'		==>	''이것은 false로 간주하기때문에 조심히 사용할것
+	//	async true 비동기	url, data, func
+	var _apiCallPost = function(url, data, successCallBack, errorCallBack, async){
+		
+		
+		if(async == undefined || async == '') {
+			async = true;
+		}else{
+			if(async == 'false'){
+				async = false;
+			}else{
+				async = true;
+			}
+		}
+		
+		
+		$.ajax({
+			url :url,
+			type: 'POST',
+			dataType : 'json',
+			data : data,
+			async : async,
+			success : function(data){
+				console.log("success : " + url);
+				console.log(data);
+				if(successCallBack == undefined || successCallBack == ''){
+					
+					console.log('success callback undefined');
+				
+				}else{
+					successCallBack(data);
+				}
+				
+			},
+			error : function(e){
+				$('.wrap-loading').addClass('display-none');
+				if(errorCallBack == undefined || errCallBack == ''){
+					//console.log("error");
+					//console.log(data);
+					var _obj = {}
+					_obj.data = data;
+					_obj.status = e.status;
+					_obj.statusText = e.statusText;
+					_obj.requestUrl = url;
+					
+					_ajaxCall("../ajax/error", _obj);
+					
+				}else{
+					errorCallBack(e);
+				} 
+			}
+		});
+	}; 
+	
+	
+	//	api call	async
+	function _apiCallAsyncLoading(_url, _data){
+		var _returnData = null;
+		
+		$.ajax({
+			url : _url,
+			type: 'POST',
+			dataType : 'json',
+			data : _data,
+			async : false,
+			beforeSend : function(){
+				$('div.wrap-loading').removeClass('display-none');
+			},
+			success : function(response){
+				_returnData = response;
+			},
+			complete : function(){
+				$('.wrap-loading').addClass('display-none');
+			},
+			error : function(e){
+				$('.wrap-loading').addClass('display-none');
+				
+				var _obj = {}
+				_obj.data = _data;
+				_obj.status = e.status;
+				_obj.statusText = e.statusText;
+				_obj.requestUrl = _url;
+				
+				_ajaxCall("../ajax/error", _obj);
+			}
+		});
+		
+		return _returnData;
+	}
+	
+	function _apiCallAsync(_url, _data){
+		var _returnData = null;
+		
+		$.ajax({
+			url : _url,
+			type: 'POST',
+			dataType : 'json',
+			data : _data,
+			async : false,
+			beforeSend : function(){
+				$('div.wrap-loading').removeClass('display-none');
+			},
+			success : function(response){
+				_returnData = response;
+			},
+			complete : function(){
+				$('.wrap-loading').addClass('display-none');
+			},
+			error : function(e){
+				$('.wrap-loading').addClass('display-none');
+				
+				var _obj = {}
+				_obj.data = _data;
+				_obj.status = e.status;
+				_obj.statusText = e.statusText;
+				_obj.requestUrl = _url;
+				
+				_ajaxCall("../ajax/error", _obj);
+			}
+		});
+		
+		return _returnData;
+	}
+	
+	//	private	error 로그 처리
+	function _ajaxCall(_url, _data){
+			
+		$.ajax({ 
+			 
+			url : _url, 
+			contentType : 'application/json;charset=utf-8;',
+			type : 'POST',
+			data : JSON.stringify(_data), 
+			success : function(data){ 
+			}, 
+			error: function(e){ 
+				//console.log(e) 
+				//alert('서버와 실패하였습니다'); 
+			} 
+		});
+	}
+	
+	
+	
+	//	======================================================================	//
+	
+	
+	
+	
+	
+	
+	//	======================================================================	//
+
+	//	form 전송		url 과 formname 값 필요	
+	function _ajaxFormPostAsync( requestUrl, formName){
+		var _returnData = null;
+		
+		var _form = $("form[name="+formName+"]")[0];
+		
+		var _formData = new FormData(_form)
+		
+		$.ajax({
+			url : requestUrl,
+			type: 'post',
+			processData: false,
+            contentType: false,
+			data : _formData,
+			async : false,
+			beforeSend : function(){
+				$('div.wrap-loading').removeClass('display-none');
+			},
+	    	success : function(response){
+	    		//console.log(2)
+				_returnData = response;
+			},
+			complete : function(){
+				$('.wrap-loading').addClass('display-none');
+			},
+			error : function(e){
+				//console.log(_form)
+				alert('서버 전송에 실패하였습니다');
+				var _obj = {}
+				_obj.status = e.status;
+				_obj.statusText = e.statusText;
+				_obj.requestUrl = requestUrl;
+				_obj.data = {};
+				
+				var _formNameData = {};
+				
+				var _inputNameArr = $(_form).find('input[name]');
+				for( var i=0; i<_inputNameArr.length; i++){
+					var _inputName = _inputNameArr[i].name;
+					
+					if($("#"+ _inputName).length == 0){
+						continue;
+					}else{
+						var _inputData = $("#"+ _inputName).val();
+						_formNameData[_inputName] = _inputData;
+					}
+				}
+				
+				_obj.data = _formNameData;
+				
+	    		_ajaxCall("../ajax/error", _obj);
+	    	}
+		});
+		
+		return _returnData;
+	}
+	//	======================================================================	//
+	
+	//	절감 추천 목록 불러오기
+	var _getSaveActCandidateListForPaging = function(SeqSite, IndexFrom, IndexTo){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/GetSaveActCandidateListForPaging";
+		
+		var _data = {};
+		_data.SeqSite = SeqSite;
+		_data.IndexFrom = IndexFrom;
+		_data.IndexTo = IndexTo;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		
+		return _returnData;
+	}
+	
+	//	아파트 정보 불러오기
+	var _getDongHoListForPaging = function(SeqSite, IndexFrom, IndexTo){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/GetDongHoListForPaging";
+		
+		var _data = {};
+		_data.SeqSite = SeqSite;
+		_data.IndexFrom = IndexFrom;
+		_data.IndexTo = IndexTo;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	var _getSiteListByMdms = function(SeqMdms){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/GetSiteListByMdms";
+		
+		var _data = {};
+		_data.SeqMdms = SeqMdms;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	var _getDongListBySite = function(SeqSite){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/GetDongListBySite";
+		
+		var _data = {};
+		_data.SeqSite = SeqSite;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	var _getDcuListBySite = function(SeqSite){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/GetDcuListBySite";
+		
+		var _data = {};
+		_data.SeqSite = SeqSite;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	//작업자 id 중복확인
+	var _getWorkerIdCount = function(WorkerId){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/GetWorkerIdCount";
+		
+		var _data = {};
+		_data.WorkerId = WorkerId;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	// 작업자 등록
+	var _createWorker = function(SeqCompany, WorkerId, Password, Name, Phone, Mail){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/CreateWorker";
+		
+		var _data = {};
+		_data.SeqCompany = SeqCompany;
+		_data.WorkerId = WorkerId;
+		_data.Password = Password;
+		_data.Name = Name;
+		_data.Phone = Phone;
+		_data.Mail = Mail;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	// 
+	var _getAmiInfo = function(){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/GetAmiInfo";
+		
+		var _data = {};
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	// 단지등록
+	var _createSite = function(SiteName, SiteCode, SitePhone){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/CreateSite";
+		
+		var _data = {};
+		_data.SiteName = SiteName;
+		_data.SiteCode = SiteCode;
+		_data.SitePhone = SitePhone;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	// 동 저장
+	var _addDong = function(SeqSite, DongName, HoNameList){
+		var _returnData = null;
+		var _url = _apiUrl+"/api/AddDong";
+		
+		var _data = {};
+		_data.SeqSite = SeqSite;
+		_data.DongName = DongName;
+		_data.HoNameList = HoNameList;
+		
+		_apiCallPost(_url, _data, function(data){
+			_returnData = data;
+		}, undefined, 'false');
+		
+		return _returnData;
+	}
+	
+	
+	
+	
+	
+	//	
+	return {
+		
+		getSaveActCandidateListForPaging: _getSaveActCandidateListForPaging,
+		getDongHoListForPaging: _getDongHoListForPaging,
+		getSiteListByMdms: _getSiteListByMdms,
+		getDongListBySite: _getDongListBySite,
+		getDcuListBySite: _getDcuListBySite,
+		createWorker: _createWorker,
+		getWorkerIdCount: _getWorkerIdCount,
+		getAmiInfo: _getAmiInfo,
+		createSite: _createSite,
+		addDong: _addDong
+	};
+}();
+
+
+

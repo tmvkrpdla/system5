@@ -1,0 +1,118 @@
+$(document).ready(function() {
+	
+	function getData() {
+		
+		var _numbersDong = $("#numbersDong").val();
+		console.log("_numbersDong = " + _numbersDong);
+				
+		for (var i = 0; i < _numbersDong; i++) {
+			
+			var _tag = "<tr class='modDongEvt'>";
+			_tag += "<td>"
+				+ '동 이름 : ' + "<input type='text' name='dongName' class='dongName'>";
+				+ "</td>";
+			_tag += "<td>" 
+				+ "<form name='dongModForm' class='dongModForm' method='post' action='popDongMod' target='popDongModForm'>"
+				+ '층당 세대 수 : ' + "<input type='text' name='oneFloorHo' class='oneFloorHo'>" +'<br>'
+				+ '층 수 : ' + "<input type='text' name='floor' class='floor'>"
+				+ "</form>" + "</td>";
+			_tag += "<td>";
+			_tag += "<input type=button class='btn btn-outline-success btn-sm' value='저장'>";	
+			_tag += "<input type=button class='btn btn-outline-success btn-sm modDongBtn' value='수정'>";	
+			_tag += "</td>";
+			_tag += "</tr>";
+            
+            $('#aptTable').append(_tag);
+            
+            var _starDongNumber = $("#starDongNumber").val();
+    		//$('#dongName').val(_starDongNumber);
+		}
+		
+		// 동 정보 변경
+		function modDong() {
+			var _trMod = document.getElementsByClassName('modDongEvt');
+			if (_trMod.length != 0) {
+
+				for (var i = 0; i < _trMod.length; i++) {
+					_trMod[i].onclick = function(e) {
+
+						if (document.getElementsByName('_oneFloorHo').length != 0) {
+							$("._oneFloorHo").remove();
+						}
+
+						if (document.getElementsByName('modCon').length != 0) {
+							$(".modCon").remove();
+						}
+						if ($(e.target).hasClass('modDongBtn')) {
+							var _dongModForm = $(this).find('form')[0];
+							console.log("_dongModForm = " + _dongModForm);
+							
+							var _oneFloorHo = $(_dongModForm).find("input[name='oneFloorHo']").val();
+							//var _oneFloorHo = $("oneFloorHo").val();
+							console.log("_oneFloorHo = " + _oneFloorHo);
+							
+							var _modCon = $(_dongModForm).find("input[name='floor']").val();
+							console.log("_modCon = " + _modCon);
+							
+							var modinput = document.createElement("input");
+							modinput.setAttribute("id", "_oneFloorHo");
+							modinput.setAttribute("class", "_oneFloorHo");
+							modinput.setAttribute("name", "_oneFloorHo");
+							modinput.setAttribute("type", "text");
+							modinput.setAttribute("value", _oneFloorHo);
+							document.body.appendChild(modinput);
+
+							var modConinput = document.createElement("input");
+							modConinput.setAttribute("id", "modCon");
+							modConinput.setAttribute("class", "modCon");
+							modConinput.setAttribute("name", "modCon");
+							modConinput.setAttribute("type", "text");
+							modConinput.setAttribute("value", _modCon);
+							document.body.appendChild(modConinput);
+
+							var _modinput = document.modinput;
+							var _modConinput = document.modConinput;
+
+							var _outerWidth = window.outerWidth * 0.4;
+							var _outerHeight = window.outerHeight * 0.5;
+							window.open("popDongMod",'popDongModForm','height=' + _outerHeight + ', width=' + _outerWidth + ', left=20, top=10, scrollbars=1');
+							// _actModForm.target = 'popActModForm';
+							_dongModForm.submit();
+							
+						} // if 끝
+					} // onclick = function(e) 끝
+				} // for 문 끝
+			} // if 끝
+		}; // modAct 끝
+		
+		modDong();
+		
+	} // getData 끝
+
+	// 동별 세대 정보 + 버튼
+	$("#DongInfoBtn").on('click', function() {
+		console.log("버튼 클릭");
+		
+		var _numbersDong = $("#numbersDong").val();
+		console.log("_numbersDong = " + _numbersDong);
+
+		var _aptName = $("#aptName").val();
+		if (_aptName == '') {
+			return alert('단지명을 입력해주시기 바랍니다');
+		}
+		
+		var _starDongNumber = $("#starDongNumber").val();
+		if (_starDongNumber == '') {
+			return alert('시작동을 입력해주시기 바랍니다. Ex)2601, 101, ...');
+		}
+	
+		var _numbersDong = $("#numbersDong").val();
+		if (_numbersDong == '') {
+			return alert('동 개수를 입력해주시기 바랍니다');
+		}
+		getData();
+
+	});
+	
+
+});

@@ -1,0 +1,110 @@
+window.onload = function main(id3, id4) {
+    var tag = "<table id='example-table-1' class='table tablesorter'>";
+   
+    var id3 = opener.$(".modCon").val();
+    var b1 = parseInt(id3);
+ 
+    var id4 = opener.window.$("._oneFloorHo").val();
+    var b2 = parseInt(id4);
+    
+    var seqSite = opener.window.$("#seqSite").val();
+
+	    for (j = 1; j <= b1; j++) {
+		tag += "<tr class='delTrHoEvt'>";
+		for (i = 1; i <= b2; i++) {
+
+			if (i < 10) {
+				tag += "<td class='delTdHoEvt'>"
+						// +j+"0"+i
+						+ "<input style='width:50px;' type='text' name='seq_ho' class='seq_ho' value=" + j + "0" + i + ">"
+						+ "<input type='button' name='delHoBtn' class='delHoBtn' value='X'>"
+						+ "</td>";
+			} else {
+				tag += "<td class='delTdHoEvt'>"
+						// +j+"0"+i
+						+ "<input style='width:50px;' type='text' name='seq_ho' class='seq_ho' value=" + j + i + ">"
+						+ "<input type='button' name='delHoBtn' class='delHoBtn' value='X'>"
+						+ "</td>";
+			}
+		}
+		tag += "</tr>";
+	}
+	// style='display: none;'
+
+	tag += "</table>";
+	area.innerHTML = tag;
+    
+    // 미사용 호 삭제
+    function delHo() {
+		var _delHoEvt = document.getElementsByClassName('delHoBtn');
+
+		for (var i = 0; i < _delHoEvt.length; i++) {
+			_delHoEvt[i].onclick = function() {
+//				var _ho = $(this).parents('tr.delTrHoEvt').find('.seq_ho').val();
+				var _selDelho = $(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").val();
+				console.log("_selDelho = " + _selDelho);
+				$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").attr("disabled", true).removeAttr('class');
+				//$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").remove();
+				//$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").removeAttr('class');
+			}
+
+		}
+
+//		var str = ""
+//		var tdArr = new Array(); // 배열선언
+//
+//		var tr = $("#example-table-1").children();
+//		console.log("tr = " + tr);
+//		var td = tr.children();
+//		var input = td.find("input[class='seq_ho']");
+//		// var input = td.find("input[disabled='false']");
+//
+//		input.each(function(i) {
+//			tdArr.push(input.eq(i).val());
+//		});
+//		console.log("배열에 담긴 값 :2 " + tdArr);
+	};
+	
+	delHo();
+		
+	//$("#actSaveBtn").on('click', function() {
+	$("#modSaveBtn").click(function() {
+		
+		var seqSite = opener.window.$("#seqSite").val();
+		var dongName = opener.window.$(".modDongName").val();
+		var str = ""
+		var tdArr = new Array(); // 배열선언
+		var tr = $("#example-table-1").children();
+		var td = tr.children();
+		var input = td.find("input[class='seq_ho']");
+		// var input = td.find("input[disabled='false']");
+		//console.log("모든 데이터 : " + tr.text());
+
+		input.each(function(i) {
+			tdArr.push(input.eq(i).val());
+		});
+		
+		
+		var str1 = tdArr.join();
+		
+		var _resDong = enernet.modules.api.addDong(seqSite, dongName, str1);
+		
+		if(_resDong.seq_dong > 0){
+			alert("저장에 성공하였습니다.");
+//			opener.window.modToggle(); 
+//			$(".modDongBtn", opener.document).css("display", "none");
+//			$(opener.document).parents("input:checked").find("input[name='modReply']").css("display", "none");
+			$(opener.document).find("input:checked").parents('td.modTd').find("input[name='modReply']").css("display", "none");
+			$(opener.document).find("input:checked").parents('td.modTd').find("input[name='reply']").css("display", "none");
+				
+			window.close();
+		}
+		else{
+			alert("저장에 실패하였습니다.");
+		}
+	});
+	
+	$("#modCancleBtn").click(function() {
+		location.reload();
+	});
+}

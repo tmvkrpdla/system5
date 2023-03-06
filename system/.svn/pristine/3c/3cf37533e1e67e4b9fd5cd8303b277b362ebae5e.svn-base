@@ -1,0 +1,114 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<%@ taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+	<form>
+		<input type="hidden" id="mainMenu" value="${mainMenu}">
+		<input type="hidden" id="subMenu" value="${subMenu}">
+	</form>
+
+
+<!-- Sidebar -->
+<!-- <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar"> -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+	<!-- Sidebar - Brand -->
+	<%-- <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<c:url value='../main/home'/> "> --%>
+	<a class="sidebar-brand d-flex align-items-center justify-content-center" href="<c:url value='../main/home'/> ">
+		<div class="sidebar-brand-icon rotate-n-15">
+			<i class="fas fa-laugh-wink"></i>
+		</div>
+		<div class="sidebar-brand-text mx-3">
+			ENERNET
+		</div> 
+<!-- 		<img src ="../resources/images/enernet_logo.png" style="width:100px;"> -->
+	</a>
+
+	<!-- Divider -->
+	<hr class="sidebar-divider my-0">
+
+	<!-- Nav Item - Home -->
+	<%-- <li class="nav-item safety-main" id=''>
+		
+		<a class="nav-link" href="<c:url value='../proj/list'/> "> 
+			<i class="fas fa-fw fa-home"></i> 
+			<span> 홈 </span>
+		</a>
+	</li>
+	 --%>
+	 
+	<li class="nav-item manager-estate">
+		<a class="nav-link" href="../apt/estate"> 
+			<i class="fas fa-building"></i>
+			<span>아파트 단지</span>
+		</a>
+	</li>
+	
+	<li class="nav-item manager-aptment">
+		<a class="nav-link" href="../apt/aptment"> 
+			<i class="fas fa-address-card"></i>
+			<span>아파트 세대</span>
+		</a>
+	</li>
+	
+	
+	<!-- 현장 사진 조회 -->
+<!-- 	<li class="nav-item manager-photoList"> -->
+<!-- 		<a class="nav-link" href="../site/photoList">  -->
+<!-- 			<i class="fas fa-image"></i> -->
+<!-- 			<span>현장 사진 조회</span> -->
+<!-- 		</a> -->
+<!-- 	</li> -->
+
+	<li class="nav-item current-mdms">
+		<a class="nav-link" href="../current/mdmsServer"> 
+			<i class="fas fa-server"></i>
+			<span>MDMS 서버</span>
+		</a>
+	</li>
+	
+	<li class="nav-item current-dcu">
+		<a class="nav-link" href="../current/dcuList"> 
+			<i class="fas fa-cogs"></i>
+			<span>DCU</span>
+		</a>
+	</li>
+	
+	<li class="nav-item current-modem">
+		<a class="nav-link" href="../current/modemList"> 
+			<i class="fas fa-hdd"></i>
+			<span>모뎀</span>
+		</a>
+	</li>
+	
+	<li class="nav-item current-meter">
+		<a class="nav-link" href="../current/meterList"> 
+			<i class="fas fa-tachometer-alt"></i>
+			<span>계량기</span>
+		</a>
+	</li>
+	
+	<li class="nav-item company-companyList">
+		<a class="nav-link" href="../company/companyList"> 
+			<i class="fas fa-network-wired"></i>
+			<span>협력업체</span>
+		</a>
+	</li>
+	
+	<li class="nav-item company-worker">
+		<a class="nav-link" href="../company/worker"> 
+			<i class="fas fa-hard-hat"></i>
+			<span>설치 작업자</span>
+		</a>
+	</li>
+
+	<hr class="sidebar-divider d-none d-md-block">
+
+	<!-- Sidebar Toggler (Sidebar) -->
+	<div class="text-center d-none d-md-inline">
+		<button class="rounded-circle border-0" id="sidebarToggle"></button>
+	</div>
+</ul>
+<!-- End of Sidebar -->

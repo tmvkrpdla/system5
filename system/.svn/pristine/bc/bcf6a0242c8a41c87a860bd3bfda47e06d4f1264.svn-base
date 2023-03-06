@@ -1,0 +1,172 @@
+package manager.co.kr.current.controller;
+
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import manager.co.kr.util.ManagerApi;
+import manager.co.kr.util.SessionUtil;
+
+@Controller
+@RequestMapping("/current")
+public class currentController {
+	
+	private final Logger logger = LoggerFactory.getLogger(currentController.class);
+
+	@RequestMapping("/mdmsServer")
+	public String mdmsList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "current") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "mdms") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			//	System.out.println("sessionMap = " + sessionMap);
+			
+			HashMap mdmsCountMap =  ManagerApi.getMdmsCount();
+			
+			int count_mdms = (Integer) mdmsCountMap.get("count_mdms");
+			System.out.println("count_mdms = " + count_mdms);
+			
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+			
+			HashMap resultMdmsMap = ManagerApi.getMdmsListForPaging(IndexFrom, IndexTo);
+			System.out.println("resultMdmsMap = " + resultMdmsMap);
+			
+			List list_mdms = (List) resultMdmsMap.get("list_mdms");
+			System.out.println("list_mdms = " + list_mdms);
+
+			moveUrl = "current/mdmsList";
+		
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			model.addAttribute("LIST_MDMS", list_mdms);
+
+		}
+
+		return moveUrl;
+
+	}
+	
+	@RequestMapping("/dcuList")
+	public String dcuList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "current") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "dcu") String subMenu,
+			@RequestParam(value = "SeqMdms", defaultValue = "") String SeqMdms,
+			@RequestParam(value = "SeqSite", defaultValue = "") String SeqSite) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			
+			HashMap mdmsCountMap =  ManagerApi.getMdmsCount();
+			int count_mdms = (Integer) mdmsCountMap.get("count_mdms");
+			//System.out.println("count_mdms = " + count_mdms);
+			
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+			
+			HashMap resultMdmsMap = ManagerApi.getMdmsListForPaging(IndexFrom, IndexTo);
+			//System.out.println("resultMdmsMap = " + resultMdmsMap);
+			
+			List list_mdms = (List) resultMdmsMap.get("list_mdms");
+			//System.out.println("list_mdms = " + list_mdms);
+			
+//			if ("".equals(SeqMdms)) {
+//				HashMap seqSiteMap = (HashMap) list_mdms.get(0);
+//				SeqMdms = String.valueOf(seqSiteMap.get("seq_mdms"));
+//				System.out.println("SeqMdms = " + SeqMdms);
+//			}
+			
+			if ("".equals(SeqSite)) {
+				SeqSite = "0";
+			}
+			
+			if ("".equals(SeqMdms)) {
+				SeqMdms = "0";
+			}
+			
+			HashMap siteMap = ManagerApi.getSiteListByMdms(SeqMdms);
+			//System.out.println("resultSiteMap = " + siteMap);
+			
+			List list_site = (List) siteMap.get("list_site");
+			//System.out.println("list_site = " + list_site);
+			
+			HashMap dcuCountMap =  ManagerApi.getDcuCount(SeqMdms, SeqSite);
+			//System.out.println("dcuCountMap = " + dcuCountMap);
+			int count_dcu = (Integer) dcuCountMap.get("count_dcu");
+			//System.out.println("count_dcu = " + count_dcu);
+			
+			HashMap dcuListMap = ManagerApi.getDcuListForPaging(SeqMdms, SeqSite, IndexFrom, IndexTo);
+			//System.out.println("dcuListMap = " + dcuListMap);
+			
+			List list_dcu = (List) dcuListMap.get("list_dcu");
+			//System.out.println("list_dcu = " + list_dcu);
+
+			moveUrl = "current/dcuList";
+			
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			model.addAttribute("LIST_MDMS", list_mdms);
+			model.addAttribute("LIST_SITE", list_site);
+			model.addAttribute("LIST_DCU", list_dcu);
+			model.addAttribute("SEQMDMS", SeqMdms);
+			model.addAttribute("SEQSITE", SeqSite);
+		}
+
+		return moveUrl;
+	}
+	
+	@RequestMapping("/modemList")
+	public String modemList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "current") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "modem") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+
+			moveUrl = "current/modemList";
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+
+		}
+
+		return moveUrl; 
+	}
+	
+	@RequestMapping("/meterList")
+	public String meterList(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "current") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "meter") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+
+			moveUrl = "current/meterList";
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+
+		}
+
+		return moveUrl; 
+	}
+}

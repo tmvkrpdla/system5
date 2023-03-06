@@ -1,0 +1,364 @@
+
+var enernet = enernet || {};
+enernet.namespace = function(ns_string) {
+	var parts = ns_string.split('.'), parent = enernet, i;
+	if (parts[0] === "enernet") {
+		parts = parts.slice(1);
+	}
+	for (i = 0; i < parts.length; i += 1) {
+		if (typeof parent[parts[i]] === "undefined") {
+			parent[parts[i]] = {};
+		}
+		parent = parent[parts[i]];
+	}
+	return parent;
+}
+enernet.namespace('enernet.modules.common');
+
+enernet.modules.common = function() {
+	//	======================================================================	//
+	
+	//	private	error 로그 처리
+	function _ajaxCall(_url, _data){
+			
+		$.ajax({ 
+			 
+			url : _url, 
+			contentType : 'application/json;charset=utf-8;',
+			type : 'POST',
+			data : JSON.stringify(_data), 
+			success : function(data){ 
+			}, 
+			error: function(e){ 
+				//console.log(e) 
+				//alert('서버와 실패하였습니다'); 
+			} 
+		});
+	}
+	
+	
+	//	======================================================================	//
+	
+	//	API 서버 전송
+	//	공통 API
+	var _apiUrl = "https://www.egservice.co.kr:6187/KepcoSafety"
+	//var _apiUrl = "https://www.kepcosafety.co.kr:6187/KepcoSafety"
+	
+		
+	function _apiCallAsync(_url, _data){
+		var _returnData = null;
+		
+		$.ajax({
+			url : _url,
+			type: 'POST',
+			dataType : 'json',
+			data : _data,
+			async : false,
+			beforeSend : function(){
+				$('div.wrap-loading').removeClass('display-none');
+			},
+			success : function(response){
+				_returnData = response;
+			},
+			complete : function(){
+				$('.wrap-loading').addClass('display-none');
+			},
+			error : function(e){
+				$('.wrap-loading').addClass('display-none');
+				
+				var _obj = {}
+				_obj.data = _data;
+				_obj.status = e.status;
+				_obj.statusText = e.statusText;
+				_obj.requestUrl = _url;
+				
+				_ajaxCall("../ajax/error", _obj);
+			}
+		});
+		
+		return _returnData;
+	}
+	
+	//	공지사항 생성하는 함수
+	var _createNotice = function(_data){
+		var _url =  _apiUrl+"/CreateNotice";
+				
+		var _result = _apiCallAsync(_url, _data);
+		
+		
+		return _result;
+	};
+	
+	//	공지사항 수정하는 함수
+	var _modifyNotice = function(_data){
+		var _url =  _apiUrl+"/ModifyNotice";
+				
+		var _result = _apiCallAsync(_url, _data);
+		
+		
+		return _result;
+	};
+	
+	//	공사목록 작성
+	var _createProject = function(_data){
+		var _url =  _apiUrl+"/CreateProject";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	공사목록 수정
+	var _modifyProject = function(_data){
+		var _url =  _apiUrl+"/ModifyProject";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	
+	//	현장 소장 등록
+	var _createDirectorCandidate = function(_data){
+		var _url =  _apiUrl+"/CreateDirectorCandidate";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	현장감독목록 수정
+	var _modifyMember = function(_data){
+		var _url =  _apiUrl+"/ModifyMember";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	공사와 감독을 연결함
+	var _coupleProjectMember = function(_data){
+		var _url =  _apiUrl+"/CoupleProjectMember";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	공사와 감독을 연결 해제함
+	var _decoupleProjectMember = function(_data){
+		var _url =  _apiUrl+"/DecoupleProjectMember";
+		var _result = _apiCallAsync(_url, _data);
+		//console.log(_result)
+		return _result;
+	}
+	
+	//	공사 중복 체크
+	var _isExistProjectId = function (_data){
+		var _url =  _apiUrl+"/IsExistProjectId";
+		var _result = _apiCallAsync(_url, _data);
+		//console.log(_result)
+		return _result; 
+	}
+	
+	//	MMS 전송 번호 등록
+	var _setMmsTarget = function(_data){
+		var _url =  _apiUrl+"/SetMmsTarget";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	작업자 / 현장소장 인지 타입 설정
+	var _setMemberType = function(_data){
+		var _url =  _apiUrl+"/SetMemberType";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	설문지 작성
+	var _createSurvey = function(_data){
+		var _url =  _apiUrl+"/CreateSurvey";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	설문지 -> 질문 작성
+	var _createQuestion = function(_data){
+		var _url =  _apiUrl+"/CreateQuestion";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	설문지 -> 질문 -> 질문 문항 작성
+	var _createItem = function(_data){
+		var _url =  _apiUrl+"/CreateItem";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	설문지 수정
+	var _modifySurvey = function(_data){
+		var _url =  _apiUrl+"/ModifySurvey";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	설문지 삭제
+	var _deleteSurvey = function(_data){
+		var _url =  _apiUrl+"/DeleteSurvey";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	설문지 -> 질문 삭제
+	var _deleteQuestion = function(_data){
+		var _url =  _apiUrl+"/DeleteQuestion";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	//	설문지 -> 질문 -> 질문 문항 삭제
+	var _deleteItem = function(_data){
+		var _url =  _apiUrl+"/DeleteItem";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+
+	/**
+	단일 혹은 다중 선택 객관식 응답을 기록함
+	SeqMember
+	SeqQuestion
+	SeqItemList : comma (,) 로 분리된 SeqItem (ex : 1,2,3,4)
+	 */
+	var _insertAnswerItemList = function(_data){
+		var _url =  _apiUrl+"/InsertAnswerItemList";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	var _insertAnswerString = function(_data){
+		var _url =  _apiUrl+"/InsertAnswerString";
+		var _result = _apiCallAsync(_url, _data);
+		return _result;
+	}
+	
+	
+	
+	//	======================================================================	//		
+	//	form 전송		->	java
+	function _ajaxFormPostAsync( requestUrl, formName){
+		var _returnData = null;
+		
+		var _form = $("form[name="+formName+"]")[0];
+		
+		var _formData = new FormData(_form)
+		
+		console.log(_formData)
+		
+		$.ajax({
+			url : requestUrl,
+			type: 'post',
+			processData: false,
+            contentType: false,
+			data : _formData,
+			async : false,
+			beforeSend : function(){
+				$('div.wrap-loading').removeClass('display-none');
+			},
+	    	success : function(response){
+	    		//console.log(2)
+				_returnData = response;
+			},
+			complete : function(){
+				$('.wrap-loading').addClass('display-none');
+			},
+			error : function(e){
+				//console.log(_form)
+				alert('서버 전송에 실패하였습니다');
+				var _obj = {}
+				_obj.status = e.status;
+				_obj.statusText = e.statusText;
+				_obj.requestUrl = requestUrl;
+				_obj.data = {};
+				
+				var _formNameData = {};
+				
+				var _inputNameArr = $(_form).find('input[name]');
+				for( var i=0; i<_inputNameArr.length; i++){
+					var _inputName = _inputNameArr[i].name;
+					
+					if($("#"+ _inputName).length == 0){
+						continue;
+					}else{
+						var _inputData = $("#"+ _inputName).val();
+						_formNameData[_inputName] = _inputData;
+					}
+				}
+				
+				_obj.data = _formNameData;
+				
+	    		_ajaxCall("../ajax/error", _obj);
+	    	}
+		});
+		
+		return _returnData;
+	}
+	
+	
+	
+	//	======================================================================	//		
+	
+	return {
+		ajaxFormPostAsync : _ajaxFormPostAsync,
+		createNotice : _createNotice, /* 공지 작성 */
+		modifyNotice : _modifyNotice, /* 공지 수정 */
+		createProject : _createProject,	/*공사 작성*/
+		modifyProject : _modifyProject, /* 공사 수정*/
+		createDirectorCandidate : _createDirectorCandidate, /*현장 소장 등록*/
+		modifyMember : _modifyMember, /*현장 소장 수정*/
+		coupleProjectMember : _coupleProjectMember, /*공사와 감독을 연결함 */
+		decoupleProjectMember : _decoupleProjectMember, /*공사와 감독을 연결 해제함 */
+		setMmsTarget : _setMmsTarget,
+		setMemberType : _setMemberType,	/*멤버 타입 변경*/
+		createSurvey : _createSurvey,
+		createQuestion : _createQuestion,
+		createItem : _createItem,
+		modifySurvey: _modifySurvey,
+		deleteSurvey : _deleteSurvey,
+		deleteQuestion : _deleteQuestion,
+		deleteItem : _deleteItem,
+		insertAnswerItemList : _insertAnswerItemList,
+		insertAnswerString : _insertAnswerString,
+		isExistProjectId : _isExistProjectId
+	};
+	
+}();
+
+
+
+
+
+
+
+
+var _devMode = true;
+
+// F12 버튼 방지
+if(!_devMode){
+	$(document).bind('keydown',function(e){
+		if (e.keyCode == 123) {
+			e.preventDefault();
+			e.returnValue = false;
+		}
+	});
+}
+ 
+// 우측 클릭 방지
+document.onmousedown=disableclick;
+ 
+function disableclick(event){
+     if (event.button==2) {
+         alert("Right click is not available.");
+         return false;
+     }
+}
+
+
+window.onload = function(){
+
+	document.getElementsByTagName('body')[0].setAttribute('oncontextmenu', 'return false');	// 우클릭방지
+	document.getElementsByTagName('body')[0].setAttribute('ondragstart', 'return false');	// 블럭선택방지
+	document.getElementsByTagName('body')[0].setAttribute('onselectstart', 'return false');	// 드래그방지
+
+}
+

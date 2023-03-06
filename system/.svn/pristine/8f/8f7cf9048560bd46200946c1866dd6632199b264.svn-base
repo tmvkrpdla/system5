@@ -1,0 +1,120 @@
+package manager.co.kr.admin.apt.controller;
+
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import manager.co.kr.util.Api;
+import manager.co.kr.util.ManagerApi;
+import manager.co.kr.util.SessionUtil;
+
+@Controller
+@RequestMapping("/apt")
+public class aptController {
+
+	private final Logger logger = LoggerFactory.getLogger(aptController.class);
+
+	@RequestMapping("/estate")
+	public String aptEstate(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "manager") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "estate") String subMenu) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+
+			HashMap sessionMap = SessionUtil.getSessionMap(session, "ADMIN");
+			//System.out.println("sessionMap = " + sessionMap);
+			
+			HashMap resultSiteCountMap =  ManagerApi.GetSiteCount();
+			//System.out.println("resultProjectCountMap = " + resultProjectCountMap);
+			int count_site = (Integer) resultSiteCountMap.get("count_site");
+			System.out.println("count_site = " + count_site);
+			
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+			
+			HashMap resultSiteMap = ManagerApi.GetSiteListForPaging(IndexFrom, count_site);
+			System.out.println("resultSiteMap = " + resultSiteMap);
+			
+			List list_site = (List) resultSiteMap.get("list_site");
+			System.out.println("list_site = " + list_site);
+
+			moveUrl = "apt/aptEstate";
+			
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			model.addAttribute("LIST_SITE", list_site);
+
+		}
+
+		return moveUrl;
+
+	}
+	
+	@RequestMapping("/aptment")
+	public String aptment(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "manager") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "aptment") String subMenu,
+			@RequestParam(value= "SeqSite", defaultValue = "") String SeqSite) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+			
+			HashMap resultSiteCountMap =  ManagerApi.GetSiteCount();
+			//System.out.println("resultProjectCountMap = " + resultProjectCountMap);
+			int count_site = (Integer) resultSiteCountMap.get("count_site");
+			System.out.println("count_site = " + count_site);
+			
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+			
+			HashMap siteMap = ManagerApi.GetSiteListForPaging(IndexFrom, count_site);
+			System.out.println("resultSiteMap = " + siteMap);
+			
+			List list_site = (List) siteMap.get("list_site");
+			System.out.println("list_site = " + list_site);
+			
+			if ("".equals(SeqSite)) {
+				HashMap seqSiteMap = (HashMap) list_site.get(0);
+				SeqSite = String.valueOf(seqSiteMap.get("seq_site"));
+			}
+			System.out.println("SeqSite = " + SeqSite);
+			
+			HashMap dongHoMap = ManagerApi.getDongHoListForPaging(SeqSite, 1, 1000);
+			System.out.println("dongHoMap = " + dongHoMap);
+			
+			HashMap site_info = (HashMap) dongHoMap.get("site_info");
+			System.out.println("site_info = " + site_info);
+			
+			List list_dong_ho = (List) dongHoMap.get("list_dong_ho");
+			System.out.println("list_dong_ho = " + list_dong_ho);
+			
+			moveUrl = "apt/aptment";
+			
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			
+			model.addAttribute("DONGHOMAP", dongHoMap);
+			model.addAttribute("SITE_INFO", site_info);
+			model.addAttribute("LIST_SITE", list_site);
+			model.addAttribute("LIST_DONG_HO", list_dong_ho);
+			model.addAttribute("SEQSITE", SeqSite);
+			
+
+		}
+
+		return moveUrl;
+
+	}
+
+}

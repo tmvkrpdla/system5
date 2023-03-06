@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="system.co.kr.mappers.testMapper">
+
+	<!-- 
+        mybatis-config.xml의 typeAlias에 등록해두지 않았다면 
+        
+        <select id="selectMember" resultType="com.example.dto.MemberVO" >
+            SELECT ID, PW ,NAME FROM TEST
+        </select>
+        
+        이렇게 해야 한다.
+    -->
+<select id="selectDcu" resultType="testVO">
+	SELECT dcu.`nSeqDcu`, site.`Name` sitename, dcu.`Location` dongname, `DcuId`
+	, dcu.`nPortSsh2` , dcu.`nFepTrapPort` ,
+	dcu.`nSnmpTrapPort`,dcu.`AddressInfo` ,dcu.`LteSn` , `Ip` ,
+	dcu.`Comment`FROM DCU
+	join site on dcu.`nSeqSite`=site.`nSeqSite`
+	where site.`nSiteState` = 1;
+</select>
+
+<select id="addOpenSiteDcu" resultType="testVO">
+	select dcu.`nSeqSite` ,dcu.`nSeqDcu`, site.`Name` sitename,
+	dcu.`Location` dongname, `DcuId` , dcu.`nPortSsh2` , dcu.`nFepTrapPort`
+	, dcu.`nSnmpTrapPort`,dcu.`AddressInfo` ,dcu.`LteSn` , `Ip` ,
+	dcu.`Comment`FROM DCU
+	join site on dcu.`nSeqSite`=site.`nSeqSite`
+	where site.`nSiteState` = 0 and dcu.`nSeqSite` =#{addSeqSite};
+</select>
+
+<select id="siteList" resultType="testVO">
+	select site.`nSeqSite` , site.`Name` sitename from site where site.`nSiteState` =0;
+</select>
+
+<update id="updateDcu" parameterType="testVO">
+	update sgp_dev.dcu_1 d set d.`addressInfo` = #{addressInfo} where d.`nSeqDcu` =#{nSeqDcu};
+</update>
+
+<!-- <select id="siteList" resultType="testVO"> -->
+<!-- 	select name searchname from site where site.`nSiteState` =1; -->
+<!-- </select> -->
+
+</mapper>

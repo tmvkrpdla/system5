@@ -1,0 +1,90 @@
+$(function() {
+
+	var _pageLink = document.getElementsByClassName('page-link');
+	
+	if(_pageLink.length != 0){
+		var _nowPage = $("#nowPage").val();
+		
+		for(var i=0; i<_pageLink.length; i++){
+			if(_pageLink[i].outerText == _nowPage){
+				document.getElementsByClassName('page-link')[i].style.backgroundColor = '#5E7FA6';
+				document.getElementsByClassName('page-link')[i].style.color = 'white';
+				document.getElementsByClassName('page-link')[i].style.borderRadius = '5px';
+			}
+		}
+	}//end of if _pageLink	
+	
+	//	조회 버튼
+	$("#searchBtn").on('click', function() {
+		$("#searchForm").submit();
+		
+//		location.href = "../apt/aptment?SeqSite="+_seqSite.val();
+	});
+	
+//	//직접입력 인풋박스 기존에는 숨어있다가
+//	$("#selboxDirect").hide();
+//	$("#DirectBtn").hide();
+//	
+	$("#aptDongSelect").on('change', function(){
+		console.log($(this).val());
+		var _seqSite = $(this).val();
+		$("#SeqSite").val(_seqSite);
+		
+//		//직접입력을 누를 때 나타남
+//		if ($("#aptDongSelect").val() == "direct") {
+//			$("#selboxDirect").show();
+//			$("#DirectBtn").show();
+//		} else {
+//			$("#selboxDirect").hide();
+//			$("#DirectBtn").hide();
+//		}
+		
+		
+	});
+//	
+//	
+//	
+//	$("#DirectBtn").on('click', function() {
+//		
+//		let str = $("#selboxDirect").val()
+//		console.log("str = " + str);
+//		
+//		let label = $("#aptDongSelect option[label]");
+//		console.log("label = " + label.text());
+//		
+//		var tdArr = new Array();
+//		tdArr.push(label.text());
+//		var str1 = tdArr.join();
+//		console.log("str1 = " + str1);
+//		
+//		var myIndex = label.text().indexOf(str);
+//		if (myIndex !== -1) {
+//			label.splice(myIndex, 1);
+//		}
+//		console.log("myIndex =" + myIndex);
+//		
+//
+//		if(label.text().indexOf(str) > 0 ){
+//			$("#aptDongSelect option").hide();
+//			//$("#aptDongSelect option[label = '"+str+"']").show();
+//			$("#aptDongSelect option[label]:indexOf('"+str+"')").show();
+//			
+//			console.log("제거 완료");
+//			
+//		} else {
+//			console.log("소스 수정바람");
+//		}
+//	
+//		
+//		
+//	});
+	
+	// 엑셀 다운로드
+	$("#memberReport").on("click", function() {
+		
+		console.log("레포트인쇄");
+		$("#reportForm").attr("action", "../apt/excelDownTest").submit();
+	});
+
+});
+

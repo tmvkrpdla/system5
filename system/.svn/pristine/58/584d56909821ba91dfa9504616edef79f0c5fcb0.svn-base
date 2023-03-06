@@ -1,0 +1,113 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>동 정보 테이블 만들기</title>
+	<jsp:include page="../common/common.jsp"></jsp:include>
+
+<c:if test="${not empty sessionScope}">
+
+</c:if>
+</head>
+
+<body id="page-top" oncontextmenu='return false' onselectstart='return false' ondragstart='return false'>
+	<%-- session이 없는 경우 --%>
+	<c:if test="${empty sessionScope.ADMIN}">
+		<jsp:include page="../common/emptySession.jsp"></jsp:include>		
+	</c:if>
+	
+	<script src="${pageContext.request.contextPath}/resources/manager/apt/js/popDongInfo.js"></script> 
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			var id3 = opener.window.$("._oneFloorHo").val();
+			//$('#seq_save_act').val(id3);
+			console.log("id3 = " + id3);
+			
+			var id4 = opener.$(".modCon").val();
+			//$('#actContent').val(id4);
+			console.log("id4 = " + id4);
+		});
+	</script>
+	
+	<c:if test="${not empty sessionScope.ADMIN}">
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+			<!-- Main Content -->
+			<div id="content">
+				<!-- Begin Page Content /.container-fluid-->
+				<div class="container-fluid">
+					<!-- blank -->
+					<div class="row" style='height:30px'>
+						<div class="col-xl-12"> </div>
+					</div>
+					
+					<!-- 동 정보 입력 시작 -->
+					<div class="row">
+						<div class="col-xl-12">
+							<div class="card shadow mb-4">
+								<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+									<h6 class="m-0 font-weight-bold text-primary">동 정보 테이블 생성</h6>
+								</div>
+							
+								<div class="card-body">
+									<div class="row">
+										<div class="col-xl-12">
+											<div style="width:100%;">
+												<div style="width:100%;">
+													
+													<div style='padding-bottom:10px;'> 
+														<span style='color:red'> * </span> 없는 세대를 삭제하세요.
+													</div>
+													
+													<div id="area"></div>
+													
+													<div style="width:100%; padding-bottom:30px;">
+														
+														<div style='width:100%; padding-top:10px; text-align: right;'>  
+															<input type="button" value='저장' class='btn btn-outline-success btn-sm' id='actSaveBtn'>
+														</div>
+													
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+								</div>
+								
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+
+	<!-- Scroll to Top Button-->
+	<!-- Logout Modal-->
+	<%-- util.jsp : logout/scroll top.. --%>
+	<jsp:include page="../common/logout.jsp"></jsp:include>
+	</c:if>
+</body>
+
+</html>

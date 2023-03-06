@@ -1,0 +1,98 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<%@ taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>login</title>
+
+<link href="./resources/matrix-admin-bt4/css/style.css" rel="stylesheet">
+<link href="./resources/matrix-admin-bt4/css/style-custom.css" rel="stylesheet">
+
+<link href="./resources/sb-admin/css/sb-admin-2.css" rel="stylesheet">
+<link href="./resources/vendor/fontawesome-free/css/all.css" rel="stylesheet">
+
+<script src="./resources/vendor/jquery/jquery.min.js"></script>
+<script src="./resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<script src="./resources/vendor/jquery-easing/jquery.easing.js"></script>
+
+<script src="./resources/sb-admin/js/sb-admin-2.js"></script>
+<script src="./resources/manager/common/js/enernet_utils.js"></script>
+<script src="./resources/manager/common/js/enernet_common.js"></script>
+<!-- <script src="./resources/common/js/common.js"></script> -->
+
+</head>
+
+<body oncontextmenu='return false' onselectstart='return false' ondragstart='return false' class="bg-primary">
+	<input type="hidden" value="${ISLOGIN}" id="ISLOGIN">
+
+	<div class="main-wrapper">
+
+		<!-- <div class="auth-wrapper d-flex no-block justify-content-center align-items-center bg-dark"> -->
+		<div class="auth-wrapper d-flex no-block justify-content-center align-items-center bg-blue">
+			<!-- <div class="auth-box bg-dark border-top border-secondary"> -->
+			<div class="auth-box border-top bg-blue">
+
+				<!-- Form -->
+				<div class="row p-b-30">
+					<div class="col-12">
+						<div class="justify-content-center card-head-center">
+							<div class="justify-content-center" style='text-align:center;padding-bottom: 20px;padding-top:20px;' >
+								<span style='color: #4C688A;font-weight: bold;font-size: 45px;'>ENERNET</span>
+							</div>
+						</div>
+
+						<br>
+<%-- 						<form id="loginForm" action="<c:url value='./login/login'/>"method="POST"> --%>
+							<form id="loginForm" action="<c:url value='./login/workerLogin'/>"method="POST">
+							<div class="form-group">
+								<label class="small mb-1" for="userId">아이디</label> <input
+									class="form-control" id="userId" name="userId" type="text" placeholder="아이디" style="height: 50px;">
+							</div>
+							
+							<div class="form-group">
+								<label class="small mb-1" for="userPwd">비밀번호</label> <input
+									class="form-control" id="userPwd" name="userPwd" type="password" placeholder="비밀번호" style="height: 50px;">
+							</div>
+						
+							<div class="" style='padding-bottom: 10px;'>
+								<input type="button" class="btn btn-primary float-right form-control" id="loginBtn" value="로그인" style="height:50px;border:1px solid #D6D9E7;background: #A2B5CA;">
+							</div>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Modal -->
+	<div id="loginModal" class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" 
+		role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="loginModalLabel"></h5>
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<!-- <div class="modal-body">...
+		            </div> -->
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+					<!-- <button class="btn btn-primary" type="button">Understood</button> -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>
