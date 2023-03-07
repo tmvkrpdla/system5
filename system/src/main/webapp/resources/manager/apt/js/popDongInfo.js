@@ -9,8 +9,7 @@ function delHo() {
 	for (var i = 0; i < _delHoEvt.length; i++) {
 		_delHoEvt[i].onclick = function() {
 			//         var _ho = $(this).parents('tr.delTrHoEvt').find('.seq_ho').val();
-			var _selDelho = $(this).parents('td.delTdHoEvt').find(
-					"input[name='seq_ho']").val();
+			var _selDelho = $(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").val();
 			console.log("_selDelho = " + _selDelho);
 
 			//         alert($(this).parents('td.delTdHoEvt').find("input[name='seq_ho']")[0].disabled);
@@ -18,8 +17,7 @@ function delHo() {
 				$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']")
 						.attr("disabled", true).removeAttr('class');
 			} else {
-				$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']")
-						.attr("disabled", false).addClass('seq_ho');
+				$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").attr("disabled", false).addClass('seq_ho');
 			}
 
 			//$(this).parents('td.delTdHoEvt').find("input[name='seq_ho']").remove();

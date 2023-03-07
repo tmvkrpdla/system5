@@ -131,7 +131,6 @@ public class aptController {
 			model.addAttribute("INDEX", index);
 			model.addAttribute("list_site_forindex", list_site_forindex);
 			
-			//?????????
 			model.addAttribute("PAGEUTIL", pageUtil);
 			model.addAttribute("nowPage", nowPage);
 
@@ -777,6 +776,64 @@ public class aptController {
 		}
 		return mav;
 	}
+	
+	
+	
+	@RequestMapping("/appRequest")
+	public String appRequest(HttpSession session, Model model,
+			@RequestParam(value = "mainMenu", defaultValue = "apt") String mainMenu,
+			@RequestParam(value = "subMenu", defaultValue = "appRequest") String subMenu,
+			@RequestParam(value = "SeqSite", defaultValue = "") String SeqSite,
+			@RequestParam(value="nowPage", defaultValue="1")int nowPage) throws Exception {
+
+		String moveUrl = "redirect:../";
+
+		StringUtil stringUtil = new StringUtil();
+		
+		HashMap siteMap = ManagerApi.GetSiteList();
+		List list_site = (List) siteMap.get("list_site");
+		System.out.println("list_site = " + list_site);
+
+		if ("".equals(SeqSite)) {
+
+			moveUrl = "apt/appRequest";
+
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+			model.addAttribute("LIST_SITE", list_site);
+
+			return moveUrl;
+
+		} else {
+			
+			HashMap appRequestCountMap = ManagerApi.GetAppRequestCount(SeqSite);
+			int count_ho = (Integer) appRequestCountMap.get("count_ho");
+			System.out.println("count_ho = " + count_ho);
+			
+			PageUtil pageUtil = new PageUtil(nowPage, count_ho, 30);
+
+			int IndexFrom = 1;
+
+			HashMap appRequestListMap = ManagerApi.GetAppRequestListForPaging(SeqSite, pageUtil.getStartNum(), pageUtil.getEndNum());
+			List list_ho = (List) appRequestListMap.get("list_ho");
+
+
+			moveUrl = "apt/appRequest";
+
+			model.addAttribute("mainMenu", mainMenu);
+			model.addAttribute("subMenu", subMenu);
+
+			model.addAttribute("SEQSITE", SeqSite);
+			model.addAttribute("PAGEUTIL", pageUtil);
+			model.addAttribute("nowPage", nowPage);
+
+			model.addAttribute("LIST_SITE", list_site);
+			model.addAttribute("LIST_HO", list_ho);
+			
+			return moveUrl;
+		}
+	}
+	
 	
 	
 	@RequestMapping("/addAptNetwork")

@@ -109,6 +109,15 @@
 			<span>철거계량기 지침값</span>
 		</a>
 	</li>
+	
+	<li class="nav-item apt-appRequest">
+		<a class="nav-link" href="../apt/appRequest"> 
+			<i class="fas fa-cogs"></i>
+			<span>입주민 앱 승인</span>
+		</a>
+	</li>
+	
+	
 	<li class="nav-item apt-badMeter">
 		<a class="nav-link" href="../apt/badMeters"> 
 			<i class="fas fa-cogs"></i>
