@@ -162,6 +162,10 @@
 														</div>
 													</div>
 													
+													<div style="float: left; padding-left: 15px;">
+														<input type="button" id="searchBtn" class="btn btn-outline-primary btn-sm" value="조회">
+													</div>
+													
 													<div class="page-heading-report-div">
 														<span class="page-heading-report-helper"></span>
 													</div>
@@ -173,7 +177,7 @@
 											<hr style="height: 2.5px; background-color: rgba(255, 255, 255, 0.1);">
 											
 											<input type="button" id="agreeBtn" class="btn btn-sm" 
-											value="승인 / 거절 정용하기" style="float: right;">
+											value="승인 및 거절 적용하기" style="float: right;">
 											
 											<table class="table tablesorter dataTable " id="dataTable" style="text-align: center;">
 													<thead>
@@ -184,9 +188,9 @@
 															<td>휴대전화</td>
 															<td>앱 ID</td>
 															<td>가족회원수</td>
-															<td>상태</td>
-															<td>승인/거절</td>
-															<td>거절사유</td>
+															<td style="display: none;">상태</td>
+															<td>승인 / 거절</td>
+<!-- 															<td>거절사유</td> -->
 															<td>요청일자</td>
 															<td>처리일자</td>
 															<td>가입일자</td>
@@ -196,22 +200,57 @@
 													<c:forEach items="${LIST_HO}" var="LIST_HO" varStatus="status">
 														<tr class="radioEvtTr">
 															<td style="color: azure !important;">${LIST_HO.dong_name}</td>
-															<td class="td_ho_name" style="color: azure !important;">
-																<input type="text" class="" name="ho_name" value="${LIST_HO.ho_name}">
+															<td class="td_ho_name" style="color: azure !important;">${LIST_HO.ho_name}
+																<input type="hidden" class="" name="ho_name" value="${LIST_HO.seq_ho}">
 															</td>
 															<td class="radioEvent" style="color: azure !important;">${LIST_HO.request_name}</td>
-			                                                <td style="color: azure !important;">${LIST_HO.request_phone}</td>
+			                                                <td class="site_phone" style="color: azure !important;">${LIST_HO.request_phone}</td>
 		                                                    <td style="color: azure !important;">${LIST_HO.member_id}</td>
 	                                                      	<td style="color: azure !important;">${LIST_HO.count_family_member}</td>
-															<td style="color: azure !important;">${LIST_HO.request_state_name}</td>
-															<td style="color: azure !important;">
-																<label><input type="radio" class="agree" name="agree_${status.count}" value="2"> 승인</label>
-    		 														<label><input type="radio" class="disAgree" name="agree_${status.count}" value="3"> 거절</label>
+															<td style="color: azure !important; display: none;">${LIST_HO.request_state_name}
+																<input class="state" type="hidden" value="${LIST_HO.request_state}">
 															</td>
-															<td style="color: azure !important;">${LIST_HO.request_comment}</td>
-															<td style="color: azure !important;">${LIST_HO.time_requested}</td>
-															<td style="color: azure !important;">${LIST_HO.time_responsed}</td>
-															<td style="color: azure !important;">${LIST_HO.time_subscribed}</td>
+															<c:choose>
+																<c:when test="${LIST_HO.request_state eq '2'}">
+																	<td class="radioTd" style="color: azure !important;">
+																		<label class="agreeLab"><input type="radio" checked="checked" class="agree" name="agree_${status.count}" value="2"> 승인</label>
+		    		 													<label class="disAgreeLab"><input type="radio" class="disAgree" name="agree_${status.count}" value="3"> 거절</label>
+																	</td>
+																</c:when>
+																<c:when test="${LIST_HO.request_state eq '4'}">
+																	<td style="color: azure !important;">가입완료</td>
+																</c:when>
+																<c:when test="${LIST_HO.request_state eq '0'}">
+																	<td style="color: azure !important;">미신청</td>
+																</c:when>
+																<c:when test="${LIST_HO.request_state eq '3'}">
+																	<td class="radioTd" style="color: azure !important;">
+																		<label class="agreeLab"><input type="radio" class="agree" name="agree_${status.count}" value="2"> 승인</label>
+		    		 													<label class="disAgreeLab"><input type="radio" checked="checked" class="disAgree" name="agree_${status.count}" value="3"> 거절</label>
+																	</td>
+																</c:when>
+																<c:otherwise>
+																	<td class="radioTd" style="color: azure !important;">
+																		<label class="agreeLab"><input type="radio" class="agree" name="agree_${status.count}" value="2"> 승인</label>
+		    		 													<label class="disAgreeLab"><input type="radio" class="disAgree" name="agree_${status.count}" value="3"> 거절</label>
+																	</td>
+																</c:otherwise>
+															</c:choose>
+															
+<%-- 															<c:choose> --%>
+<%-- 																<c:when test="${LIST_HO.request_comment ne ''}"> --%>
+<%-- 																	<td class="content" style="color: azure !important;">${LIST_HO.request_comment}</td> --%>
+<%-- 																</c:when> --%>
+<%-- 																<c:otherwise> --%>
+<!-- 																	<td> -->
+<!-- 																		<input class="comment" type="text"> -->
+<!-- 																	</td> -->
+<%-- 																</c:otherwise> --%>
+<%-- 															</c:choose> --%>
+															
+															<td class="time_requested" style="color: azure !important;">${LIST_HO.time_requested}</td>
+															<td class="time_responsed" style="color: azure !important;">${LIST_HO.time_responsed}</td>
+															<td class="time_subscribed" style="color: azure !important;">${LIST_HO.time_subscribed}</td>
 														</tr>
 													</c:forEach>
 													</tbody>
