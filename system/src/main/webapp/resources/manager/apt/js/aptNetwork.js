@@ -19,6 +19,20 @@ function createInput(typeName, objName, value, width){
 		
 	return input;
 }
+function postAjaxJson(jobCode, clientData, fn){
+	const ajax =  new XMLHttpRequest();
+	
+	ajax.onreadystatechange = function(){
+		if(ajax.readyState == 4 && ajax.status == 200){
+			window[fn](ajax.responseText);
+		}
+	}
+	ajax.open("post", jobCode);
+	ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	if(clientData!=null){ajax.send(clientData);}
+	
+}
+
 
 
 function makeTable(){
@@ -90,7 +104,7 @@ let LIST_SITE = LIST_SITE3;
 		addSelect.appendChild(addOption);
 	}
 	
-	
+	let getSelectedInfo = "";
 	addSelect.addEventListener('change', function (){
 		let listTbody = document.getElementsByClassName('listTbody')[0];
 		listTbody.innerText="";
@@ -98,7 +112,7 @@ let LIST_SITE = LIST_SITE3;
 		
 		let selectednSeqSite = addSelect.options[addSelect.selectedIndex].value;
 		
-		let getSelectedInfo= "";
+		getSelectedInfo= "";
 		for(let i = 0 ; i < LIST_SITE.length; i ++ ){
 			if(LIST_SITE[i].nSeqSite == selectednSeqSite){
 				getSelectedInfo=LIST_SITE[i]
@@ -229,12 +243,68 @@ let LIST_SITE = LIST_SITE3;
 			
 			$(addAptNetworkView).attr("action", "../apt/delNetwork").submit();
 		});
+		
+		
 	});
 	
+	$("#getLteIp").on("click", function() {
+		
+		
+		let getLteIpInput = document.getElementById('getLteIpInput');
+		let jsonLte = JSON.parse(getLteIpInput.value);
+		
+		let snList = getSelectedInfo;
+		
+		
+		alert(JSON.stringify(getSelectedInfo));
+		for(let i = 0; i < jsonLte.length; i++){
+			delete jsonLte[i]['objectId'];
+			delete jsonLte[i]['createdAt'];
+			delete jsonLte[i]['updatedAt'];
+			delete jsonLte[i]['mdn'];
+			delete jsonLte[i]['firmnm'];
+			delete jsonLte[i]['lvl'];
+			delete jsonLte[i]['userId'];
+			delete jsonLte[i]['ver'];
+			delete jsonLte[i]['modelName'];
+			delete jsonLte[i]['lastReportAt'];
+			
+			}
+		
+		let cData = "jsonLte="+JSON.stringify(jsonLte) + "&snList="+ JSON.stringify(snList) ;
+		postAjaxJson( "lteIp" , cData , "callback");
+		
+//		for (let i = 0; i < getSelectedInfo.LteSn.length; i++){
+//			for(let j = 0; j< jsonLte.length; i++){
+//				if( getSelectedInfo.LteSn[i]==jsonLte[j].memo){
+////					if(i == getSelectedInfo.LteSn.length-1){
+////						lteList.push(jsonLte[j]);
+////						break;
+////					}else {
+//						lteList.push(jsonLte[j]);
+//					}
+//					
+//				}
+//				
+//			}
+		
+		
+		
+//		let form = document.getElementById('addAptNetworkView');
+//		form.appendChild(nSeqSite);
+//		
+//		$(addAptNetworkView).attr("action", "../apt/delNetwork").submit();
+	});
 	
 	
 }
 
+function callback (ajaxData){
+	let list = JSON.parse(ajaxData);
+	alert(list);
+	console.log("으익;;");
+	alert("콜백이지롱 ");
+}
 
 function inputKey(i, pElement, element,  postElement) {
 	
@@ -256,5 +326,6 @@ function inputKey(i, pElement, element,  postElement) {
 	}
 	
 };
+
 
 

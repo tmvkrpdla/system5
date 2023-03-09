@@ -84,6 +84,8 @@ let LIST_SITE2 = ${LIST_SITE2};
 													
 													<div class="page-heading-report-div">
 														<span class="page-heading-report-helper"></span>
+														<textarea id="getLteIpInput" class="" ></textarea>
+														<input type="button" id="getLteIp" class="btn btn-outline-primary btn-sm" value="아이피 조회">
 														<input type="button" id="excelDown" class="btn btn-outline-primary btn-sm" value="엑셀 다운">
 														<input type="button" id="addAptNetwork" class="btn btn-outline-primary btn-sm" value="단지 추가">
 													</div>
