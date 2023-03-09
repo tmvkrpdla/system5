@@ -118,7 +118,7 @@
 	</li>
 	
 	
-	<!-- 입주민 앱 승인 LGJ -->
+	<!-- 입주민 앱 승인 LGJd -->
 	
 <!-- 	<li class="nav-item apt-appRequestLGJ"> -->
 <!-- 		<a class="nav-link" href="../apt/appRequestLGJ">  -->
