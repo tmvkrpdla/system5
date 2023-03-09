@@ -276,12 +276,13 @@ function getData(_aptName, _siteCode, _sitePhone) {
 					+ "</form>" + "</td>";
 			_tag += "<td class='modTd' style='vertical-align:middle'>"
 					+ "<input type=button class='btn btn-outline-success btn-sm saveDongBtn' name='reply' id='saveDongBtn' value='입력'>"
-					+ "<input type=button class='btn btn-outline-success btn-sm naverReply' name='naverReply' id='naverReply' value='네이버 입력'>"
+					+ "<input type=button class='btn btn-outline-success btn-sm naverReplyBtn' name='naverReply' id='naverReplyBtn' value='네이버 입력'>"
 					+ "<input type='radio' name='modRadio' class='modRadio' style='display:none;'>"
 					+ "<input type='button' class='btn btn-outline-success btn-sm modDongBtn' name= 'modReply' style='margin-left: 5px;' value='수정'>"
 					+ "<input type='text' class='btn btn-outline-success btn-sm saveBtn' name= 'saveState' style='margin-left: 5px; width: 90px;' value='입력전'>"
 					+ "<input type='hidden' class='btn btn-outline-success btn-sm dongName2' name= 'dongName2' style='margin-left: 5px;'>"
-					+ "<input type='text' class='btn btn-outline-success btn-sm str1' name= 'str1' style='margin-left: 5px;' value=''>"
+					+ "<input type='text' class='btn btn-outline-success btn-sm str1' readonly='readonly' name= 'str1' style='margin-left: 5px;' value=''>"
+					+ "<input type='text' class='btn btn-outline-success btn-sm str2' readonly='readonly' name= 'str2' style='margin-left: 5px;' value=''>"
 					+ "<input type=hidden id='aptName' value='"+_aptName+"'>" 
 					+ "<input type=hidden id='siteCode' value='"+ _siteCode+"'>"
 					+ "<input type=hidden id='sitePhone' value='"+_sitePhone+"'>"
@@ -316,10 +317,6 @@ function getData(_aptName, _siteCode, _sitePhone) {
 
 						if (document.getElementsByName('matrixHo').length != 0) {
 							$(".matrixHo").remove();
-						}
-
-						if (document.getElementsByName('matrixFloor').length != 0) {
-							$(".matrixFloor").remove();
 						}
 
 						if (document.getElementsByName('matrixFloor').length != 0) {
@@ -422,10 +419,8 @@ function getData(_aptName, _siteCode, _sitePhone) {
 
 						dongName2Box[_saveBtnIdx].value = _dongName;
 						str1Box[_saveBtnIdx].value = str1;
-						_saveState[_saveBtnIdx].value = "입력완료"
-						$(this).closest("input[name='reply']").toggle();
-						
-						
+//						_saveState[_saveBtnIdx].value = "입력완료"
+//						$(this).closest("input[name='reply']").toggle();
 
 						// lgj
 						let totalSeDae = document.getElementById('totalSedae');
@@ -433,14 +428,10 @@ function getData(_aptName, _siteCode, _sitePhone) {
 						for (let i = 0; i < str1Box.length; i++) {
 							if (str1Box[i].value != "") {
 								// alert(str1Box[i].value);
-								totalSeDae2 = totalSeDae2
-										+ str1Box[i].value.split(',').length;
+								totalSeDae2 = totalSeDae2 + str1Box[i].value.split(',').length;
 								totalSeDae.value = "입력된 총 세대수 : " + totalSeDae2;
 							}
 						}
-						
-						
-						
 						
 					}
 				}
@@ -478,13 +469,11 @@ function getData(_aptName, _siteCode, _sitePhone) {
 							if (_dongName == '') {
 								return alert('동 이름을 입력해주시기 바랍니다.');
 							}
-							var _oneFloorHo = $(_dongModForm).find(
-									"input[name='oneFloorHo']").val();
+							var _oneFloorHo = $(_dongModForm).find("input[name='oneFloorHo']").val();
 							if (_oneFloorHo == '') {
 								return alert('층당 세대 수를 입력해주시기 바랍니다.');
 							}
-							var _modCon = $(_dongModForm).find(
-									"input[name='floor']").val();
+							var _modCon = $(_dongModForm).find("input[name='floor']").val();
 							if (_modCon == '') {
 								return alert('층수를 입력해주시기 바랍니다.');
 							}
@@ -537,8 +526,7 @@ function getData(_aptName, _siteCode, _sitePhone) {
 							_dongModForm.submit();
 
 							// $(this).find("input[name='modReply']").toggle();
-							$(this).find("input[name='modRadio']").prop(
-									"checked", true);
+							$(this).find("input[name='modRadio']").prop("checked", true);
 							// $("input:checkbox[name='NAME명']").prop("checked",
 							// false);
 
@@ -553,44 +541,29 @@ function getData(_aptName, _siteCode, _sitePhone) {
 		
 		// 네이버입력버튼
 		function naverReply() {
-			var _trSave = document.getElementsByClassName('naverReply');
-			for (let i = 0; i < _trSave.length; i++) {
-
-				_trSave[i].onclick = function(e) {
-					if ($(e.target).hasClass('naverReply')) {
-
-						if (document.getElementsByName('matrixHo').length != 0) {
-							$(".matrixHo").remove();
+			var _trNaverSave = document.getElementsByClassName('naverReplyBtn');
+			for (let i = 0; i < _trNaverSave.length; i++) {
+				
+				_trNaverSave[i].onclick = function(e) {
+					
+					if ($(e.target).hasClass('naverReplyBtn')) {
+					
+						if (document.getElementsByName('nowNaverInfo').length != 0) {
+							$(".nowNaverInfo").remove();
 						}
-
-						if (document.getElementsByName('matrixFloor').length != 0) {
-							$(".matrixFloor").remove();
-						}
-
-						if (document.getElementsByName('matrixFloor').length != 0) {
-							$(".matrixFloor").remove();
-						}
-
+						
 						if (document.getElementsByName('saveBtnIdx').length != 0) {
 							$(".saveBtnIdx").remove();
 						}
-
+						
 						thisIdx = i;
-						let _thisIdxNow = thisIdx;
-						console.log("thisIdx = ", thisIdx);
-						console.log("_thisIdxNow = " + _thisIdxNow);
 
-						var _seqSite = $(".seqSite").val();
 						var _dongModForm = $(this).parents('tr.saveDongEvt').find('form')[0];
 
 						var _dongName = $(this).parents('tr.saveDongEvt').find("input[name='dongName']").val();
-//						var _dongName =$(_dongModForm).find("input[name='dongName']").val();
 						if (_dongName == '') {
 							return alert('동 이름을 입력해주시기 바랍니다.');
 						}
-
-						var _oneFloorHo = $(_dongModForm).find("input[name='oneFloorHo']").val();
-						var _floor = $(_dongModForm).find("input[name='floor']").val();
 					
 						var _naverInfo = $(_dongModForm).find("input[name='naverInfo']").val();
 					
@@ -598,36 +571,35 @@ function getData(_aptName, _siteCode, _sitePhone) {
 							return alert('정보를 입력하세요.');
 						}
 						
+						var nowNaverInfo = document.createElement("input");
+						nowNaverInfo.setAttribute("id", "nowNaverInfo");
+						nowNaverInfo.setAttribute("class", "nowNaverInfo");
+						nowNaverInfo.setAttribute("name", "nowNaverInfo");
+						nowNaverInfo.setAttribute("type", "hidden");
+						nowNaverInfo.setAttribute("value", _naverInfo);
+						document.body.appendChild(nowNaverInfo);
 						
 						var saveBtnIdx = document.createElement("input");
 						saveBtnIdx.setAttribute("id", "saveBtnIdx");
 						saveBtnIdx.setAttribute("class", "saveBtnIdx");
 						saveBtnIdx.setAttribute("name", "saveBtnIdx");
-						saveBtnIdx.setAttribute("type", "text");
+						saveBtnIdx.setAttribute("type", "hidden");
 						saveBtnIdx.setAttribute("value", thisIdx);
 						document.body.appendChild(saveBtnIdx);
 						
-//						var saveBtnIdxNow = document.createElement("input");
-//						saveBtnIdx.setAttribute("id", "saveBtnIdxNow");
-//						saveBtnIdx.setAttribute("class", "saveBtnIdxNow");
-//						saveBtnIdx.setAttribute("name", "saveBtnIdxNow");
-//						saveBtnIdx.setAttribute("type", "text");
-//						saveBtnIdx.setAttribute("value", thisIdx);
-//						document.body.appendChild(saveBtnIdxNow);
+						var _nowNaverInfo = $(".nowNaverInfo").val();
 						
-						var obj = JSON.parse(_naverInfo);
-//						alert(obj);
+						var obj = JSON.parse(_nowNaverInfo);
 						alert("층수 : " + obj.length);
-//						alert(obj[0].pyeongHoList[1].hoName);
 						
 						var tdArr = new Array(); // 배열선언
 						
-						for(i=0; i<obj.length; i++) {
+						for(let i=0; i<obj.length; i++) {
 							
 							var _pyeongHoList = obj[i].pyeongHoList;
 //							alert("_pyeongHoList = " + _pyeongHoList);
 							
-							for(j=0; j<_pyeongHoList.length; j++) {
+							for(let j=0; j<_pyeongHoList.length; j++) {
 								if(obj[i].pyeongHoList[j].hoName != null) {
 									tdArr.push(obj[i].pyeongHoList[j].hoName);
 								}
@@ -637,47 +609,42 @@ function getData(_aptName, _siteCode, _sitePhone) {
 						tdArr.sort(function compare(a, b) {
 							return a - b;
 						});
-						console.log(tdArr);
 						
 						let dongName2Box = document.getElementsByName('dongName2');
 						let str1Box = document.getElementsByName('str1');
+						let str2Box = document.getElementsByName('str2');
+						
 						let _saveState = document.getElementsByName('saveState');
 						let _saveBtnIdx = $(".saveBtnIdx").val();
 
 						var str1 = tdArr.join();
-						console.log("str1 = " + str1);
 
 						dongName2Box[_saveBtnIdx].value = _dongName;
-						alert(_dongName);
-//						dongName2Box[_thisIdxNow].value = _dongName;
 						str1Box[_saveBtnIdx].value = str1;
+						str2Box[_saveBtnIdx].value = str1Box[_saveBtnIdx].value.split(',').length + "세대";
 						_saveState[_saveBtnIdx].value = "입력완료"
-						$(this).closest("input[name='reply']").toggle();
+//						$(this).closest("input[name='reply']").toggle();
 						
 						// lgj
-						let totalSeDae= document.getElementById('totalSedae');
-		                  let totalSeDae2 = 0;
-		                  alert(str1Box.length);
-		                  for(let i = 0; i < str1Box.length; i++ ){
-		                     if(str1Box[i].value != ""){
-		                       // alert(str1Box[i].value);
-		                        totalSeDae2 = totalSeDae2 + str1Box[i].value.split(',').length ;
-		                        totalSeDae.value = "입력된 총 세대수 : " + totalSeDae2;
-		                       }
-		                  }
-						
-						
-						
-						
+						let totalSeDae = document.getElementById('totalSedae');
+						let totalSeDae2 = 0;
+						for (let i = 0; i < str1Box.length; i++) {
+							if (str1Box[i].value != "") {
+								totalSeDae2 = totalSeDae2 + str1Box[i].value.split(',').length;
+								totalSeDae.value = "입력된 총 세대수 : " + totalSeDae2;
+							}
+						}
 					}
 				}
+				
 			} // if e.target end
 
 		}; // saveDong2 end
-
+		
+		naverReply();
 		modDong();
 		saveDong();
-		naverReply();
+		
 
 	} catch (e) {
 		console.log('error');
