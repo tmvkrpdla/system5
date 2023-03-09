@@ -529,6 +529,7 @@ function getData(_aptName, _siteCode, _sitePhone) {
 							$(this).find("input[name='modRadio']").prop("checked", true);
 							// $("input:checkbox[name='NAME명']").prop("checked",
 							// false);
+							
 
 						} // if 끝
 
