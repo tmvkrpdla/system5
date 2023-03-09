@@ -118,6 +118,16 @@
 	</li>
 	
 	
+	<!-- 입주민 앱 승인 LGJd -->
+	
+<!-- 	<li class="nav-item apt-appRequestLGJ"> -->
+<!-- 		<a class="nav-link" href="../apt/appRequestLGJ">  -->
+<!-- 			<i class="fas fa-cogs"></i> -->
+<!-- 			<span>입주민 앱 승인LGJ</span> -->
+<!-- 		</a> -->
+<!-- 	</li> -->
+	
+	
 	<li class="nav-item apt-badMeter">
 		<a class="nav-link" href="../apt/badMeters"> 
 			<i class="fas fa-cogs"></i>
