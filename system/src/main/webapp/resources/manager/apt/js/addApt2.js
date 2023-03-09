@@ -648,6 +648,7 @@ function getData(_aptName, _siteCode, _sitePhone) {
 						console.log("str1 = " + str1);
 
 						dongName2Box[_saveBtnIdx].value = _dongName;
+						alert(_dongName);
 //						dongName2Box[_thisIdxNow].value = _dongName;
 						str1Box[_saveBtnIdx].value = str1;
 						_saveState[_saveBtnIdx].value = "입력완료"
@@ -656,6 +657,7 @@ function getData(_aptName, _siteCode, _sitePhone) {
 						// lgj
 						let totalSeDae= document.getElementById('totalSedae');
 		                  let totalSeDae2 = 0;
+		                  alert(str1Box.length);
 		                  for(let i = 0; i < str1Box.length; i++ ){
 		                     if(str1Box[i].value != ""){
 		                       // alert(str1Box[i].value);
