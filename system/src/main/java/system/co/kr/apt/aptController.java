@@ -47,6 +47,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import system.co.kr.apt.service.Apt;
+import system.co.kr.beans.AppRequestVO;
 import system.co.kr.beans.networkVO;
 import system.co.kr.dto.ManagerVO;
 import system.co.kr.dto.TestVO;
@@ -1027,6 +1028,36 @@ public class aptController {
 
 	}
 	
+	//lgj
+	@RequestMapping("/appRequestLGJ")
+	public ModelAndView appRequest(HttpSession session, ModelAndView mav, 
+			@RequestParam(value = "SeqSite", defaultValue="") String SeqSite,
+			@RequestParam(value="nowPage", defaultValue="1") int nowPage
+			) throws Exception {
+		mav.addObject("SeqSite" , SeqSite);
+		mav.addObject("nowPage" , nowPage);
+		
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+			apt.backController("appRequest", mav );
+		} else {mav.setViewName("redirect:../");}
+		return mav;
+	}
+	
+	@RequestMapping("/appRequestSendLGJ")
+	public ModelAndView appRequestSend(HttpSession session, ModelAndView mav, 
+			@ModelAttribute("appRequestSend") AppRequestVO appRequestVO,
+			@RequestParam(value = "SeqSite", defaultValue="") String SeqSite,
+			@RequestParam(value="nowPage", defaultValue="1") int nowPage
+			) throws Exception {
+		mav.addObject("SeqSite" , SeqSite);
+		mav.addObject("nowPage" , nowPage);
+		mav.addObject("appRequestVO", appRequestVO);
+		
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+			apt.backController("appRequestSend", mav );
+		} else {mav.setViewName("redirect:../");}
+		return mav;
+	}
 	
 	
 }

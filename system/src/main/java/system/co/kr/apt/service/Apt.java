@@ -15,10 +15,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import system.co.kr.beans.AppRequestVO;
 import system.co.kr.beans.networkVO;
 import system.co.kr.beans.networkVOUpd;
 import system.co.kr.inter.ServicesRule;
 import system.co.kr.util.ManagerApi;
+import system.co.kr.util.PageUtil;
 
 @Service
 public class Apt implements ServicesRule {
@@ -46,6 +48,18 @@ public class Apt implements ServicesRule {
 		case "delNetwork":
 			this.delNetwork(mav);
 			break;
+		case "badMeters":
+			this.badMeters(mav);
+			break;
+		case "getLpListByMid":
+			this.getLpListByMid(mav);
+			break;	
+		case "appRequest":
+			this.appRequest(mav);
+			break;	
+		case "appRequestSend":
+			this.appRequestSend(mav);
+			break;		
 		default:
 		}
 	}
@@ -156,7 +170,6 @@ public class Apt implements ServicesRule {
 			mav.addObject("LIST_SITE3", json4);  
 			mav.addObject("mainMenu", "apt");
 			mav.addObject("subMenu", "aptNetwork");
-			System.out.println("현재상태"+ mav.getModel().get("nSeqSite"));
 			mav.addObject("action", null);
 
 			mav.setViewName("apt/aptNetwork");
@@ -201,16 +214,173 @@ public class Apt implements ServicesRule {
 		mav.addObject("action", "del");
 		
 	}
+	private void badMeters(ModelAndView mav)  {
+		HashMap apiData = null;
+		try {
+			apiData = ManagerApi.collectBadMeters();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		List list_bad_meter = (List) apiData.get("list_bad_meter");
+		Gson gson = new Gson();
+		JsonObject json = gson.toJsonTree(apiData).getAsJsonObject();
+
+		mav.addObject("json", json);
+
+		mav.addObject("list_bad_meter", list_bad_meter);
+		mav.addObject("total", list_bad_meter.size());
+		mav.addObject("mainMenu", "apt");
+		mav.addObject("subMenu", "badMeter");
+
+		mav.setViewName("apt/badMeters");
+	}
+	private void getLpListByMid(ModelAndView mav)  {
+		
+		HashMap apiData = null;
+		try {
+			apiData = ManagerApi.getLpListByMid((String)mav.getModel().get("Mid"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List list_lp = (List) apiData.get("list_lp");
+		HashMap ho_info = (HashMap) apiData.get("ho_info");
+
+		mav.addObject("list_lp", list_lp);
+		mav.addObject("total", list_lp.size());
+		mav.addObject("ho_info", ho_info);
+
+		mav.setViewName("apt/getLp");
+	}
 	
 	// model 방식 메서드
 	
 	
+	//입주민 앱승인
+	private void appRequest(ModelAndView mav) {
+		
+		String SeqSite = (String)mav.getModel().get("SeqSite");
+		int nowPage = (int)mav.getModel().get("nowPage");
+		HashMap resultSiteCountMap;
+		List list_site = null;
+		try {
+			resultSiteCountMap = ManagerApi.GetSiteCount();
+			int count_site = (Integer) resultSiteCountMap.get("count_site");
+
+			int IndexFrom = 1;
+			int IndexTo = 1000;
+
+			HashMap siteMap = ManagerApi.GetSiteListForPaging(IndexFrom, count_site);
+
+			list_site = (List) siteMap.get("list_site");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if ("".equals(SeqSite)) {
+			mav.addObject("LIST_SITE", list_site);
+		} else {
+			
+			
+			HashMap CountMap = null;
+			List list_ho = null;
+			PageUtil pageUtil = null;
+			try {
+				CountMap = ManagerApi.getAppRequestCount(SeqSite);
+				int count_ho = (Integer) CountMap.get("count_ho");
+				pageUtil = new PageUtil(nowPage, count_ho, 30);
+				HashMap hoMap = ManagerApi.getAppRequestListForPaging(SeqSite, pageUtil.getStartNum(), pageUtil.getEndNum());
+				list_ho = (List) hoMap.get("list_ho");
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			mav.addObject("LIST_SITE", list_site);
+			mav.addObject("LIST_HO", list_ho);
+			mav.addObject("SEQSITE", SeqSite);
+			mav.addObject("nowPage", nowPage);
+
+		}
+		mav.addObject("mainMenu", "apt");
+		mav.addObject("subMenu", "appRequestLGJ");
+		mav.setViewName("apt/appRequestLGJ");
+	}
+
 	
 	
 	
-	
-	
-	
+	private void appRequestSend(ModelAndView mav) {
+		AppRequestVO appRequestVO = (AppRequestVO)mav.getModel().get("appRequestVO");
+		List<String> acceptList = appRequestVO.getAcceptList();
+		List<String> rejectList = appRequestVO.getRejectList();
+		
+		String accept = "";
+		String reject = "";
+		List <String[]> rejectComment = new ArrayList<>();
+		
+		if(acceptList!=null) {
+			for(int i=0; i <acceptList.size(); i++ ) {
+				if(i==0) {
+					accept+=acceptList.get(i);
+				}else {
+					accept+= ","+ acceptList.get(i);
+				}
+			}
+		}
+		if(rejectList!=null) {
+			for(int i=0; i <rejectList.size(); i++ ) {
+				if(rejectList.get(i).contains(":")) {
+					String[] rejectArray = rejectList.get(i).split(":");
+					rejectList.set(i, rejectArray[0]);
+					rejectComment.add(rejectArray);
+				}else {
+					String[] rejectArray = new String[2];
+					rejectArray[0] = rejectList.get(i);
+					rejectArray[1] = "";
+					rejectList.set(i, rejectList.get(i));
+					rejectComment.add(rejectArray);
+				}
+				
+				if(i==0) {
+					reject+=rejectList.get(i);
+				}else {
+					reject+= ","+ rejectList.get(i);
+				}
+			}
+		}
+		
+		System.out.println("accept : "+accept);
+		System.out.println("reject : "+reject);
+		
+		try {
+			ManagerApi.setAppRequestsAsAccepted(accept);
+			ManagerApi.setAppRequestsAsRejected(reject);
+			
+//			for (int i=0;i<acceptList.size();i++ ) {
+//				ManagerApi.SetAppRequestComment(acceptList.get(i) ,"");
+//			}
+//			for (int i = 0; i < rejectComment.size(); i++) {
+//				if (rejectComment.get(i)[1].equals("")) {
+//					rejectComment.get(i)[1] = "";
+//				}
+//				ManagerApi.SetAppRequestComment(rejectComment.get(i)[0], rejectComment.get(i)[1]);
+//				System.out.println("seq_ho : " + rejectComment.get(i)[0] + " Comment : " + rejectComment.get(i)[1]);
+//			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		int nowPage = (int)mav.getModel().get("nowPage");
+		
+		System.out.println("nowPage : " + nowPage);
+		
+		this.appRequest(mav);
+		
+		
+	}
 	
 	
 	
