@@ -8,9 +8,10 @@ $(document).ready(
 			// 동별 세대 정보 + 버튼
 			function addDongInfo() {
 				var _delHoEvt = document.getElementsByClassName('dongInfoBtn');
-
+				
 				for (var i = 0; i < _delHoEvt.length; i++) {
 					_delHoEvt[0].onclick = function() {
+						
 						_numbersDong = $("#numbersDong").val();
 						// console.log("_numbersDong = " + _numbersDong);
 
@@ -33,6 +34,8 @@ $(document).ready(
 						if (_sitePhone == '') {
 							return alert('관리실 번호를 입력해주세요.');
 						}
+						
+						document.getElementById('totalSedae').style.visibility = "visible";
 						
 						var nohipen = _sitePhone.replace(/-/g, "");
 						
@@ -262,7 +265,7 @@ function getData(_aptName, _siteCode, _sitePhone) {
 			var _tag = "<tr class='saveDongEvt modDongEvt'>";
 			_tag += "<td style='vertical-align:middle'>"
 					+ '동 이름 : '
-					+ "<input type='text' onkeyup='goNextDongName("+ i +")' name='dongName' class='dongName form-control' style='width: 30%; display: inline;'>";
+					+ "<input type='text' onkeyup='goNextDongName("+ i +")' name='dongName' class='dongName form-control' style='width: 65px; display: inline;'>";
 			+"</td>";
 			_tag += "<td style='vertical-align:middle'>"
 					+ "<form name='dongModForm' class='dongModForm' method='post' action='popDongMod' target='popDongModForm'>"
@@ -274,9 +277,9 @@ function getData(_aptName, _siteCode, _sitePhone) {
 					+ '네이버 정보 복사 : '
 					+ "<input type='text' name='naverInfo' class='naverInfo form-control' style='width: 10%; display: inline;'>"
 					+ "</form>" + "</td>";
-			_tag += "<td class='modTd' style='vertical-align:middle'>"
+			_tag += "<td class='modTd' style='vertical-align:middle' colspan='4'>"
 					+ "<input type=button class='btn btn-outline-success btn-sm saveDongBtn' name='reply' id='saveDongBtn' value='입력'>"
-					+ "<input type=button class='btn btn-outline-success btn-sm naverReplyBtn' name='naverReply' id='naverReplyBtn' value='네이버 입력'>"
+					+ "<input type=button class='btn btn-outline-success btn-sm naverReplyBtn' name='naverReply' id='naverReplyBtn' style='margin-left: 5px;' value='네이버 입력'>"
 					+ "<input type='radio' name='modRadio' class='modRadio' style='display:none;'>"
 					+ "<input type='button' class='btn btn-outline-success btn-sm modDongBtn' name= 'modReply' style='margin-left: 5px;' value='수정'>"
 					+ "<input type='text' class='btn btn-outline-success btn-sm saveBtn' name= 'saveState' style='margin-left: 5px; width: 90px;' value='입력전'>"
@@ -330,7 +333,6 @@ function getData(_aptName, _siteCode, _sitePhone) {
 						thisIdx = i;
 						console.log("thisIdx = ", thisIdx);
 
-						var _seqSite = $(".seqSite").val();
 						var _dongModForm = $(this).parents('tr.saveDongEvt').find('form')[0];
 
 						var _dongName = $(this).parents('tr.saveDongEvt').find("input[name='dongName']").val();

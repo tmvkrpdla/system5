@@ -417,9 +417,7 @@ public class aptController {
 	
 	// kakao 테스트
 	@RequestMapping("/addApt2")
-	public String addApt2(HttpSession session, Model model,
-			@RequestParam(value = "siteName", defaultValue = "") String siteName,
-			@RequestParam(value= "nowPage", defaultValue = "1") int nowPage) throws Exception {
+	public String addApt2(HttpSession session, Model model) throws Exception {
 		
 		String moveUrl = "redirect:../";
 		//System.out.println("nowPage = " + nowPage);
@@ -427,9 +425,6 @@ public class aptController {
 
 		if (!SessionUtil.isNull(session, "ADMIN")) {
 			moveUrl = "apt/addApt2";
-			
-			model.addAttribute("SITENAME", siteName);
-			
 			
 		}
 		return moveUrl;
