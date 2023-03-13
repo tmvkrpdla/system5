@@ -557,6 +557,12 @@ function getData(_aptName, _siteCode, _sitePhone) {
 						}
 						
 						thisIdx = i;
+						alert("thisIdx : "  + thisIdx);
+						
+						let _thisIdxNow = thisIdx;
+						
+						console.log("thisIdx = ", thisIdx);
+						console.log("_thisIdxNow = " + _thisIdxNow);
 
 						var _dongModForm = $(this).parents('tr.saveDongEvt').find('form')[0];
 
@@ -606,6 +612,7 @@ function getData(_aptName, _siteCode, _sitePhone) {
 							}
 							
 						}
+						
 						tdArr.sort(function compare(a, b) {
 							return a - b;
 						});
@@ -634,6 +641,15 @@ function getData(_aptName, _siteCode, _sitePhone) {
 								totalSeDae.value = "입력된 총 세대수 : " + totalSeDae2;
 							}
 						}
+						let totalSeDae= document.getElementById('totalSedae');
+		                  let totalSeDae2 = 0;
+		                  for(let i = 0; i < str1Box.length; i++ ){
+		                     if(str1Box[i].value != ""){
+		                       // alert(str1Box[i].value);
+		                        totalSeDae2 = totalSeDae2 + str1Box[i].value.split(',').length ;
+		                        totalSeDae.value = "입력된 총 세대수 : " + totalSeDae2;
+		                       }
+		                  }
 					}
 				}
 				
