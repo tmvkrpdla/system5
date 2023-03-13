@@ -1,10 +1,23 @@
 package system.co.kr.apt;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -44,7 +58,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import system.co.kr.apt.service.Apt;
 import system.co.kr.beans.AppRequestVO;
@@ -267,13 +283,22 @@ public class aptController {
 
 			PageUtil pageUtil = new PageUtil(nowPage, count_ho, 30);
 
-			HashMap hoMap = ManagerApi.getHoListBySiteForPaging(SeqSite, pageUtil.getStartNum(), pageUtil.getEndNum());
-			List list_ho = (List) hoMap.get("list_ho");
-			System.out.println("list_ho = " + list_ho);
+//			HashMap hoMap = ManagerApi.getHoListBySiteForPaging(SeqSite, pageUtil.getStartNum(), pageUtil.getEndNum());
+//			List list_ho = (List) hoMap.get("list_ho");
+			
+			//to json
+			
+			JSONObject hoMap = JSonApi.getHoListBySiteForPaging(SeqSite, pageUtil.getStartNum(), pageUtil.getEndNum());
+			JSONArray list_ho = (JSONArray) hoMap.get("list_ho");
+//			System.out.println("list_ho = " + list_ho);
 
 			HashMap dongHoMapForExcel = ManagerApi.getHoListBySiteForPaging(SeqSite, 1, 10000);
+			
+			
+			JSONObject hoMapForDown = JSonApi.getHoListBySiteForPaging(SeqSite, 1, 100000);
+			JSONArray list_ho_ForDown = (JSONArray) hoMapForDown.get("list_ho");
+			
 
-			// 2023 01 10 �����ٿ� �׽�Ʈ
 			Gson gson = new Gson();
 
 			JsonObject json = gson.toJsonTree(dongHoMapForExcel).getAsJsonObject();
@@ -285,6 +310,9 @@ public class aptController {
 			// model.addAttribute("SITE_INFO", site_info);
 			model.addAttribute("LIST_SITE", list_site);
 			model.addAttribute("LIST_HO", list_ho);
+			model.addAttribute("LIST_HO_FORDOWN", list_ho_ForDown);
+			
+			
 			model.addAttribute("SEQSITE", SeqSite);
 			model.addAttribute("SITENAME", SiteName);
 			model.addAttribute("PAGEUTIL", pageUtil);
@@ -340,7 +368,6 @@ public class aptController {
     public String oldmeterExcelView2(@RequestParam HashMap paramMap, @RequestParam(value = "json2") String json2,
           @RequestParam(value = "SiteName") String siteName,
           HttpSession session, Model model, HttpServletResponse response) throws Exception {
-       System.out.println("������ ��Ʈ�Ѵ�");
        // JSON String to Map jacksonLibrary
        ObjectMapper mapper = new ObjectMapper();
        
@@ -372,6 +399,225 @@ public class aptController {
        return "oldmeterExcelView2";
 
     }
+	
+	
+	@RequestMapping(value = "/meterImageDown", method = { RequestMethod.POST })
+	public String meterImageDown(@RequestParam HashMap paramMap, @RequestParam(value = "LIST_HO2") String LIST_HO2,
+			HttpSession session, Model model, HttpServletResponse response, HttpServletRequest req) throws Exception {
+		// JSON String to Map jacksonLibrary
+
+		Gson gson = new Gson();
+//		JsonObject json = gson.toJsonTree(LIST_HO2).getAsJsonObject();
+//		System.out.println("json = " + json);
+
+		JsonParser parser = new JsonParser();
+
+		JsonArray jarry = (JsonArray) parser.parse(LIST_HO2);
+		System.out.println("jarry : " + jarry);
+//        Object obj = parser.parse(LIST_HO2);
+//        JsonObject jobj = (JsonObject)parser.parse(LIST_HO2);
+
+		List<Integer> seqHoList = new ArrayList<Integer>();
+
+		for (int i = 0; i < jarry.size(); i++) {
+			JsonObject seqHoMap = (JsonObject) jarry.get(i);
+			int seqHo = Integer.valueOf(String.valueOf(seqHoMap.get("seq_ho")));
+			seqHoList.add(seqHo);
+		}
+
+		System.out.println("seqHoList = " + seqHoList);
+//		System.out.println(SiteName2 + "이 아파트 전체 세대 = " + seqHoList.size() + "세대");
+
+//		for (int h = 0; h < jarry.size(); h++) {
+//		JSONObject detailInfoMap = JSonApi.getHoInfo(seqHoList.get(h));
+		JSONObject detailInfoMap = JSonApi.getHoInfo(seqHoList.get(0));
+		JSONObject ho_info = (JSONObject) detailInfoMap.get("ho_info");
+		JSONArray list_image_meter = (JSONArray) detailInfoMap.get("list_image_meter");
+		System.out.println("list_image_meter : " + list_image_meter);
+
+		List<String> imgUrlList = new ArrayList<String>();
+
+		for (int i = 0; i < list_image_meter.size(); i++) {
+			JSONObject list_image_meter_map = (JSONObject) list_image_meter.get(i);
+			String url_image = String.valueOf(list_image_meter_map.get("url_image"));
+			imgUrlList.add(url_image);
+		}
+
+		System.out.println("imgUrlList : " + imgUrlList);
+
+		// 디렉토리 만들기
+//			Path directoryPath = Paths.get("C:\\Users\\enernet99\\Downloads\\new_test_0313");
+//			Files.createDirectory(directoryPath);
+//
+//			System.out.println(directoryPath + " 디렉토리가 생성되었습니다.");
+
+//			File dir = new File("C:\\Users\\enernet99\\\\Downloads\\");
+//		File dir = new File(System.getProperty("user.home"));
+			BufferedImage image = null;
+
+		System.out.println("갯수 : " + imgUrlList.size());
+
+		for (int j = 0; j < imgUrlList.size(); j++) {
+//				URL url = new URL(imgUrlList.get(j));
+//				image = ImageIO.read(url);
+
+//				dir.mkdir();
+//				String fileName = "test_meter_img7_" + j;
+//		String fileName urlCodecUtil.decode(goodsInfo.getGoodsTitle()).replace("/", "");
+
+//		ImageIO.write(image, "png", new File(dir.toString() + "/" + fileName + ".png"));
+//				ImageIO.write(image, "png", new File(dir.toString() + "/" + fileName + ".png"));  
+//				ImageIO.write(image, "png", response.getOutputStream());
+//				System.out.println("저장성공ㅋ");
+
+			// // //
+			
+
+			String spec = "test.png";
+			String outputDir = "C:\\Users\\enernet99\\Downloads\\new_test_0313";
+
+			InputStream is = null;
+
+			// This will get input data from the server
+			InputStream inputStream = null;
+
+			// This will read the data from the server;
+			OutputStream outputStream = null;
+			FileOutputStream os = null;
+			try {
+				
+				URL url = new URL(imgUrlList.get(j));
+
+				// This user agent is for if the server wants real humans to visit
+				String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
+
+				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				int responseCode = conn.getResponseCode();
+				
+				
+				System.out.println("responseCode " + responseCode);
+
+				// Status 가 200 일 때
+				if (responseCode == HttpURLConnection.HTTP_OK) {
+					
+//					conn.setRequestProperty("User-Agent", USER_AGENT);
+					
+					String fileName = "";
+					String fileName2 = "";
+					String fileName3 = "";
+					String disposition = conn.getHeaderField("Content-Disposition");
+					String contentType = conn.getContentType();
+
+					// 일반적으로 Content-Disposition 헤더에 있지만
+					// 없을 경우 url 에서 추출해 내면 된다.
+					if (disposition != null) {
+						String target = "filename=";
+						int index = disposition.indexOf(target);
+						if (index != -1) {
+							fileName = disposition.substring(index + target.length() + 1);
+						}
+					} else {
+						fileName = imgUrlList.get(j).substring(imgUrlList.get(j).lastIndexOf("/") + 1);
+						fileName2 = imgUrlList.get(j);
+					}
+
+//					System.out.println("Content-Type = " + contentType);
+//					System.out.println("Content-Disposition = " + disposition);
+//					System.out.println("fileName = " + fileName);
+//					System.out.println("fileName2 = " + fileName2);
+//
+//					is = conn.getInputStream();
+//					os = new FileOutputStream(new File(outputDir, fileName));
+//
+//					final int BUFFER_SIZE = 4096;
+//					int bytesRead;
+//					byte[] buffer = new byte[BUFFER_SIZE];
+//					while ((bytesRead = is.read(buffer)) != -1) {
+//						os.write(buffer, 0, bytesRead);
+//					}
+//					os.close();
+//					is.close();
+//					System.out.println("File downloaded");
+//					System.out.println("저장성공ㅋ");
+					
+					
+//					String uploadPath = "C:\\Users\\enernet99\\Downloads\\new_test_0313\\";
+					String uploadPath =  imgUrlList.get(j);
+//				 	String saveFileName = imgUrlList.get(j);
+//			        String originalFileName = imgUrlList.get(j);
+					
+					
+					String browser = req.getHeader("User-Agent");
+					
+					BufferedImage img = ImageIO.read(url);
+					File file = new File("downloaded.jpg");
+					ImageIO.write(img, "jpg", file);
+			        
+//			        File downloadFile = new File(uploadPath + fileName);
+//			        File downloadFile = new File(uploadPath);
+//					File downloadFile = Paths.get(url.toURI()).toFile();
+//			        File file = Paths.get(url.toURI()).toFile();
+//			        FileUtils.copyURLToFile(new URL(uploadPath), downloadFile);
+			        
+			        byte fileByte[] = FileUtils.readFileToByteArray(file);
+			        
+			        response.setContentType("application/octet-stream");
+			        response.setContentLength(fileByte.length);
+			        
+			        response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(fileName,"UTF-8") +"\";");
+			        response.setHeader("Content-Transfer-Encoding", "binary");
+			        response.getOutputStream().write(fileByte);
+			        response.getOutputStream().flush();
+			        response.getOutputStream().close();
+					
+					
+				} 
+				
+				
+				
+				else {
+					System.out.println("No file to download. Server replied HTTP code: " + responseCode);
+				}
+				conn.disconnect();
+			} catch (Exception e) {
+				System.out.println("An error occurred while trying to download a file.");
+				e.printStackTrace();
+				try {
+					if (is != null) {
+						is.close();
+					}
+					if (os != null) {
+						os.close();
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			
+			
+			
+		}
+		
+		
+
+//		}
+		
+		String moveUrl = "apt/valueOld";
+		return moveUrl;
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	@RequestMapping("/aptDetailInfo")
 	public String aptInfo(HttpSession session, Model model,

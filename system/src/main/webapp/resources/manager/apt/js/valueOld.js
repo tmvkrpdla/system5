@@ -9,6 +9,11 @@ $(function() {
 	   $("#excelDownA").on("click", function() {
 	      $("#oldmeterExcelViewA").attr("action", "../apt/oldmeterExcelViewA").submit();
 	   });
+	   
+	   //계량기 사진 다운 테스트
+	   $("#imageDown").on("click", function() {
+		      $("#meterImageDown").attr("action", "../apt/meterImageDown").submit();
+		   });
 
    var _pageLink = document.getElementsByClassName('page-link');
    
@@ -30,6 +35,7 @@ $(function() {
       //console.log($(this).val());
       var _seqSite = $(this).val();
       $("#SeqSite").val(_seqSite);
+      
       $("#nowPage").val("");
       
       var target = document.getElementById("siteSelect");
@@ -37,6 +43,7 @@ $(function() {
       var _siteName = target.options[target.selectedIndex].text;
       
       $("#SiteName").val(_siteName);
+      $("#SiteName2").val(_siteName);
       
    });
    
