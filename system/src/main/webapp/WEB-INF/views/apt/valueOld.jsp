@@ -81,6 +81,7 @@
                                              <span class="page-heading-report-helper"></span>
                                              <input type="button" id="excelDown" class="btn btn-outline-primary btn-sm" value="입주민용 엑셀 다운">
                                              <input type="button" id="excelDownA" class="btn btn-outline-primary btn-sm" value="엑셀 다운">
+                                          	 <input type="button" id="imageDown" class="btn btn-outline-primary btn-sm" value="계량기 사진 다운">
                                           </div>
                                        </c:if>
                                        
@@ -163,7 +164,9 @@
                               <input type="hidden" readonly id="SiteName" name="SiteName" value="${SITENAME}">
                            </form> 
                            
-                                 
+                           <form name="meterImageDown" id="meterImageDown" method="post" >
+                              <input type="hidden" readonly value='${LIST_HO_FORDOWN}' id="LIST_HO_FORDOWN" name="LIST_HO2">
+                           </form> 
                            
                            <c:if test="${LIST_HO ne null}">
                            <!-- 페이징 -->
