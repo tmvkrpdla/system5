@@ -255,7 +255,6 @@ let LIST_SITE = LIST_SITE3;
 		
 		let snList = getSelectedInfo;
 		
-		
 		alert(JSON.stringify(getSelectedInfo));
 		for(let i = 0; i < jsonLte.length; i++){
 			delete jsonLte[i]['objectId'];
@@ -274,35 +273,13 @@ let LIST_SITE = LIST_SITE3;
 		let cData = "jsonLte="+JSON.stringify(jsonLte) + "&snList="+ JSON.stringify(snList) ;
 		postAjaxJson( "lteIp" , cData , "callback");
 		
-//		for (let i = 0; i < getSelectedInfo.LteSn.length; i++){
-//			for(let j = 0; j< jsonLte.length; i++){
-//				if( getSelectedInfo.LteSn[i]==jsonLte[j].memo){
-////					if(i == getSelectedInfo.LteSn.length-1){
-////						lteList.push(jsonLte[j]);
-////						break;
-////					}else {
-//						lteList.push(jsonLte[j]);
-//					}
-//					
-//				}
-//				
-//			}
-		
-		
-		
-//		let form = document.getElementById('addAptNetworkView');
-//		form.appendChild(nSeqSite);
-//		
-//		$(addAptNetworkView).attr("action", "../apt/delNetwork").submit();
 	});
 	
 	
 }
 
 function callback (ajaxData){
-	let list = JSON.parse(ajaxData);
-	alert(list);
-	console.log("으익;;");
+	
 	alert("콜백이지롱 ");
 }
 

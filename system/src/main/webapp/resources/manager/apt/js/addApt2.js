@@ -576,7 +576,10 @@ function getData(_aptName, _siteCode, _sitePhone) {
 						}
 
 						thisIdx = i;
+						alert("thisIdx : "  + thisIdx);
+						
 						let _thisIdxNow = thisIdx;
+						
 						console.log("thisIdx = ", thisIdx);
 						console.log("_thisIdxNow = " + _thisIdxNow);
 
@@ -634,6 +637,7 @@ function getData(_aptName, _siteCode, _sitePhone) {
 							}
 							
 						}
+						
 						tdArr.sort(function compare(a, b) {
 							return a - b;
 						});
@@ -663,6 +667,7 @@ function getData(_aptName, _siteCode, _sitePhone) {
 		                        totalSeDae.value = "입력된 총 세대수 : " + totalSeDae2;
 		                       }
 		                  }
+		                  i=0;
 						
 						
 						

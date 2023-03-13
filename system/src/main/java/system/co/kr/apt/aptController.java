@@ -1,10 +1,24 @@
 package system.co.kr.apt;
 
+import java.awt.PageAttributes.MediaType;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,27 +29,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
+import org.ini4j.Ini;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,10 +74,16 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.Tesseract1;
+import net.sourceforge.tess4j.TesseractException;
 import system.co.kr.apt.service.Apt;
 import system.co.kr.beans.AppRequestVO;
 import system.co.kr.beans.networkVO;
+import system.co.kr.beans.sampleSessionVO;
 import system.co.kr.dto.ManagerVO;
 import system.co.kr.dto.TestVO;
 import system.co.kr.util.Api;
@@ -206,7 +241,6 @@ public class aptController {
 				model.addAttribute("mainMenu", mainMenu);
 				model.addAttribute("subMenu", subMenu);
 				model.addAttribute("DONGHOMAP", dongHoMap);
-				//model.addAttribute("SITE_INFO", site_info);
 				model.addAttribute("LIST_SITE", list_site);
 				model.addAttribute("LIST_DONG", list_dong);
 				model.addAttribute("LIST_DONG_HO", list_dong_ho);
@@ -325,7 +359,9 @@ public class aptController {
 		response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");
 		response.setContentType("Application/Msexcel");
 		response.setHeader("Content-Transfer-Encoding", "binary");
-
+		
+		System.out.println("dd");
+		
 //		model.addAttribute("PARAMMAP", paramMap);
 		model.addAttribute("METERINGMAP", data);
 		model.addAttribute("list_ho", list_ho);
@@ -1081,7 +1117,8 @@ public class aptController {
 		model.addAttribute("fileName", fileName);
 //
 		return "excelViewBadMeters";
-
+		
+		
 	}
 	
 	//lgj
@@ -1114,6 +1151,159 @@ public class aptController {
 		} else {mav.setViewName("redirect:../");}
 		return mav;
 	}
+	
+	@RequestMapping("/lteIp") //lgj
+	public  void lteIp(HttpSession session, Model model, HttpServletResponse response, HttpServletRequest request,
+			@RequestParam(value = "jsonLte") String jsonLte,
+			@RequestParam(value = "snList") String snList
+			) throws Exception {
+		
+		sampleSessionVO sample = new sampleSessionVO();
+		
+		// sampleSession Load 
+		String sad = sample.getSad();
+		
+		
+		if (!SessionUtil.isNull(session, "ADMIN")) {
+			
+			JsonParser parser = new JsonParser();
+			ObjectMapper mapper = new ObjectMapper();
+			
+			JsonArray jsonLteArray = (JsonArray) parser.parse(jsonLte);
+			Map<String, Object> data = mapper.readValue(snList, new TypeReference<Map<String, Object>>() {
+			});
+			
+			
+			JsonObject snListObject = (JsonObject) parser.parse(snList);
+			
+			
+			String aptName = (String) data.get("Name");
+			ArrayList lteSn = (ArrayList)data.get("LteSn");
+			ArrayList dcuId = (ArrayList)data.get("dcuid");
+			ArrayList nPortSsh2 = (ArrayList)data.get("nPortSsh2");
+			ArrayList location = (ArrayList)data.get("location");
+			
+			
+			System.out.println("zzz2" + data);
+			
+			
+			List <Map<String, Object>> a = new ArrayList <Map<String, Object>>() ; // a :  jsonLte List 
+			List<Map<String, Object>> sessionInfoList = new ArrayList<Map<String, Object>>() ; // b :  snList List 
+			
+			for(int i = 0; i < jsonLteArray.size(); i++) {
+			a.add(mapper.readValue(jsonLteArray.get(i).toString(), new TypeReference<Map<String, Object>>() {}));  
+			}
+			
+			
+			System.out.println("ltesnsize" + lteSn.size());
+			System.out.println("asize"+a.size());
+			for(int i=0; i < lteSn.size() ; i++) {
+				for(int j=0; j < a.size() ; j++) {
+					
+					Map<String,Object> map = new HashMap <String, Object>();
+					
+					if(lteSn.get(i).equals(a.get(j).get("memo"))) {
+						map.put("lteSn", lteSn.get(i));
+						map.put("dcuId", dcuId.get(i));
+						
+						String changePort = (String)nPortSsh2.get(i);
+						
+						if(changePort.equals("50001")){changePort="0000c351";}
+						else if(changePort.equals("50002")){changePort="0000c352";}
+						else if(changePort.equals("50003")){changePort="0000c353";}
+						else if(changePort.equals("50004")){changePort="0000c354";}
+						else if(changePort.equals("50005")){changePort="0000c355";}
+						else if(changePort.equals("50006")){changePort="0000c356";}
+						
+						map.put("nPortSsh2",  changePort);
+						map.put("location", location.get(i));
+						map.put("ipa", a.get(j).get("ipa"));
+						
+						sessionInfoList.add(map); 
+						
+					}
+				}
+			}
+			
+			System.out.println("sessionInfoList : " + sessionInfoList);
+			 	
+			List<File> sessionList=  new ArrayList<File>(); 
+			
+			
+//			FileReader reader = new FileReader("../");
+			// 50001 : 0000c351
+			
+			for(int i=0; i<sessionInfoList.size(); i++ ) {
+					File newSession = new File((String) sessionInfoList.get(i).get("dcuId")+ "_"+(String) sessionInfoList.get(i).get("location") + ".ini");
+			 	
+		        try {
+		        	
+		        	
+		        	sad = sad.replaceAll("ipa", (String)sessionInfoList.get(i).get("ipa"));
+		        	sad = sad.replaceAll("sshport", (String)sessionInfoList.get(i).get("nPortSsh2"));
+		        	
+		        	System.out.println(sad);
+		            //write string to file
+		            FileUtils.writeStringToFile(newSession, sad);
+		            System.out.print("Data written to file successfully.");
+		            
+		        } catch (IOException e) {
+		            e.printStackTrace();
+		        }
+		        sessionList.add(newSession);
+			}
+			
+		        
+		        if (sessionList.get(0).isFile()) {System.out.println("이안에 파일 있다.");}
+		        
+		        String folderPath = System.getProperty("user.dir");
+		        
+		        String fileName = aptName + ".zip";
+		        
+		        String tempPath = "C:\\Users\\we285\\git\\system5\\system\\src\\main\\webapp\\resources\\session\\";
+		       
+		        File zipFile = new File(tempPath, fileName);
+		        byte[] buf = new byte[4096];
+		 
+		        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))) {
+		 
+		            for (File file : sessionList) {
+		                try (FileInputStream in = new FileInputStream(file)) {
+		                    ZipEntry ze = new ZipEntry(file.getName());
+		                    out.putNextEntry(ze);
+		 
+		                    int len;
+		                    while ((len = in.read(buf)) > 0) {
+		                        out.write(buf, 0, len);
+		                    }
+		 
+		                    out.closeEntry();
+		                }
+		 
+		            }
+		        }
+		        
+		        
+		        
+		        System.out.println("압축 파일 생성 성공");
+		 
+		        
+		}else { }
+		
+	}
+	
+	
+	
+	@RequestMapping(value="/multi-file", method=RequestMethod.POST)
+	public void multiFileUpload(@RequestParam("multiFile") List<MultipartFile> multiFileList, @RequestParam String fileContent, HttpServletRequest request) throws IOException {
+		System.out.println("안녕");
+		// 받아온것 출력 확인
+		
+		System.out.println("multiFileList : " + multiFileList);
+		System.out.println("fileContent : " + fileContent);
+		
+	}
+	
 	
 	
 }

@@ -13,6 +13,7 @@
 
 
 
+
 <c:if test="${not empty sessionScope}">
 	<script src="${pageContext.request.contextPath}/resources/manager/apt/js/aptNetwork.js"></script>
 
@@ -134,8 +135,12 @@ let LIST_SITE2 = ${LIST_SITE2};
 							</div>
 							</div>
 						</div>
+						<form action="multi-file" method="post"  enctype="multipart/form-data">
+							파일 : <input type="file" name="multiFile" multiple> <br>
+							파일 설명 : <input type="text" name="fileContent"><br>
+							<input type="submit" value="제출">
+						</form>
 						<!-- 검색, text 끝-->
-						<!-- /.container-fluid -->
 					</div>
 				</div>
 				<!-- End of Main Content -->
@@ -154,6 +159,9 @@ let LIST_SITE2 = ${LIST_SITE2};
 		<%-- util.jsp : logout/scroll top.. --%>
 		<jsp:include page="../common/logout.jsp"></jsp:include>
 	</c:if>
+	
 </body>
+
 <jsp:include page="../common/common.jsp"></jsp:include>
+
 </html>
